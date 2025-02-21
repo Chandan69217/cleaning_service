@@ -133,15 +133,17 @@ class _AccountScreenState extends State<AccountScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(flex: 1, child: Icon(icon, size: 24 * fontSizeScaling)), // Scaled icon size
+          Expanded(flex: 1, child: Icon(icon, size: 20 * fontSizeScaling)),
           SizedBox(height: 20),
           Expanded(
             flex: 2,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.bold,
-                fontSize: 16 * fontSizeScaling, // Scaled text size
+            child: Center(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14 * fontSizeScaling,
+                ),
               ),
             ),
           ),
@@ -153,12 +155,12 @@ class _AccountScreenState extends State<AccountScreen> {
 
   Widget _buildListItem(IconData icon, String label, double fontSizeScaling) {
     return ListTile(
-      leading: Icon(icon, size: 24 * fontSizeScaling), // Scaled icon size
+      leading: Icon(icon, size: 16 * fontSizeScaling), // Scaled icon size
       title: Text(
         label,
-        style: TextStyle(fontSize: 16 * fontSizeScaling), // Scaled font size
+        style: TextStyle(fontSize: 14 * fontSizeScaling,fontWeight: FontWeight.normal), // Scaled font size
       ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16 * fontSizeScaling), // Scaled icon size
+      trailing: Icon(Icons.arrow_forward_ios, size: 14 * fontSizeScaling,), // Scaled icon size
       onTap: () {},
     );
   }

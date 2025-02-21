@@ -1,3 +1,4 @@
+import 'package:cleaning_service/screens/authentication/login_screen.dart';
 import 'package:cleaning_service/screens/splash/splash_screen.dart';
 import 'package:cleaning_service/utilities/theme_data.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: themeData(context),
-        home: SplashScreen(),
+        home: LoginScreen(),
     );
   }
 }
