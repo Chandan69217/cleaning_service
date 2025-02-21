@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-ThemeData themeData(){
+ThemeData themeData(BuildContext context){
+  final text_scale_factor = MediaQuery.of(context).textScaleFactor;
   return ThemeData(
     useMaterial3: true,
     textTheme: TextTheme(
-      bodyLarge: GoogleFonts.poppins().copyWith(
-        fontSize: 18.0,
-        fontWeight: FontWeight.w500,
+      bodyLarge: TextStyle(
+        fontSize: 18.0*text_scale_factor,
+        fontWeight: FontWeight.bold,
+          fontFamily: 'proxima_nova',
       ),
-            bodyMedium: GoogleFonts.poppins().copyWith(
-          fontSize: 16.0,
-        ),
-        bodySmall: GoogleFonts.poppins().copyWith(
-          fontSize: 13.0,
+            bodyMedium: TextStyle(
+              fontSize: 14.0*text_scale_factor,
+                fontFamily: 'proxima_nova'
+            ),
+        bodySmall: TextStyle(
+          fontSize: 12.0*text_scale_factor,
+          fontFamily: 'proxima_nova'
         )
     )
   );

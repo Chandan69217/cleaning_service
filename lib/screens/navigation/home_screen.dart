@@ -6,7 +6,7 @@ import '../../models/data.dart';
 import '../../utilities/cust_colors.dart';
 
 
-class HomeScreen extends StatefulWidget{
+class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -14,14 +14,21 @@ class HomeScreen extends StatefulWidget{
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    double fontSize = screenWidth * 0.05; // 5% of screen width for font size
+    double iconSize = screenWidth * 0.07; // 8% of screen width for icons
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            LocationSection(),
-            UCSection(),
-            ReviewsSection(),
-            BottomSection(),
+            LocationSection(fontSize: fontSize, iconSize: iconSize),
+            UCSection(fontSize: fontSize,iconSize: iconSize,),
+            ReviewsSection(fontSize: fontSize),
+            BottomSection(fontSize: fontSize),
           ],
         ),
       ),
@@ -29,16 +36,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
-
-
 class LocationSection extends StatelessWidget {
+  final double fontSize;
+  final double iconSize;
+
+  const LocationSection({required this.fontSize, required this.iconSize});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80.0,
-      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+      height: 75.0,
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
@@ -51,34 +59,46 @@ class LocationSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Icon(FontAwesomeIcons.locationArrow),
-                SizedBox(width: 8.0,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${Data.user_placemarks.first.locality}',
-                      style:Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold,),
-                    ),
-                    Text(
-                      '${Data.address}',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF757575)),
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                    ),
-                  ],
+                Icon(FontAwesomeIcons.locationArrow, size: iconSize * 0.9),
+                SizedBox(width: 8.0),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '${Data.user_placemarks.first.locality}',
+                          style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                            fontSize: fontSize * 1.01,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          '${Data.address}',
+                          style: TextStyle(
+                            fontSize: fontSize * 0.7,
+                            color: Color(0xFF757575),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
+          SizedBox(width: 8.0,),
           Container(
               padding: EdgeInsets.all(5.0),
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.grey,width: 1)
-              ),
-              child: Icon(Icons.shopping_cart, size: 30)),
+                  border: Border.all(color: Colors.grey, width: 1)),
+              child: Icon(Icons.shopping_cart, size: iconSize)),
         ],
       ),
     );
@@ -86,42 +106,52 @@ class LocationSection extends StatelessWidget {
 }
 
 class UCSection extends StatelessWidget {
+  final double fontSize;
+  final double iconSize;
+  const UCSection({required this.iconSize, required this.fontSize});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 8.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(10.0),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'UC got you covered',
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 24, fontWeight: FontWeight.bold),
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: fontSize * 1.5,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 2.0),
           Column(
             children: [
               UCItem(
                 icon: Icons.shield,
                 text: '2-year unconditional warranty',
+                fontSize: fontSize*0.85,
               ),
-              SizedBox(height: 2,),
+              SizedBox(height: 2),
               UCItem(
                 icon: Icons.sync,
                 text: '10-day replacement',
+                fontSize: fontSize*0.85,
               ),
-              SizedBox(height: 2,),
+              SizedBox(height: 2),
               UCItem(
                 icon: Icons.car_repair_outlined,
                 text: 'Free 2-day delivery',
+                fontSize: fontSize*0.85,
               ),
-              SizedBox(height: 2,),
+              SizedBox(height: 2),
               UCItem(
                 icon: Icons.credit_card,
                 text: 'No cost EMI available',
+                fontSize: fontSize*0.85,
               ),
             ],
           ),
@@ -134,40 +164,55 @@ class UCSection extends StatelessWidget {
 class UCItem extends StatelessWidget {
   final IconData icon;
   final String text;
+  final double fontSize;
 
-  const UCItem({required this.icon, required this.text});
+  const UCItem({
+    required this.icon,
+    required this.text,
+    required this.fontSize,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 20),
+        Icon(icon, size: fontSize * 1.1),
         SizedBox(width: 8.0),
-        Text(text, style:Theme.of(context).textTheme.bodyMedium),
+        Text(
+          text,
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: fontSize),
+        ),
       ],
     );
   }
 }
 
 class ReviewsSection extends StatelessWidget {
-  PageController controller = PageController(viewportFraction: 0.9,keepPage: true,);
+  final double fontSize;
+  PageController controller = PageController(viewportFraction: 0.9, keepPage: true);
+
+  ReviewsSection({required this.fontSize});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.only(top: 6.0),
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             'Customer reviews',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontSize: fontSize * 1.5,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           Text(
             'Customers love us! See for yourself.',
-            style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
+            style: TextStyle(fontSize: fontSize * 0.8, color: Color(0xFF757575)),
           ),
           SizedBox(
             height: 180.0,
@@ -175,21 +220,21 @@ class ReviewsSection extends StatelessWidget {
               controller: controller,
               padEnds: false,
               itemCount: 4,
-
               itemBuilder: (BuildContext context, int index) {
-                return  Padding(
-                  padding: const EdgeInsets.only(right: 8.0,top: 8.0,left: 8.0),
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0, top: 8.0, left: 8.0),
                   child: ReviewCard(
                     text: '“No more holding the water bottle till it fills up. The pre-sets are great!”',
                     author: 'Shreya Virmani',
                     date: 'Dec 22 · Mumbai',
                     rating: 5,
+                    fontSize: fontSize,
                   ),
                 );
               },
             ),
           ),
-          const SizedBox(height: 8,),
+          const SizedBox(height: 8),
           Align(
             alignment: Alignment.center,
             child: SmoothPageIndicator(
@@ -214,12 +259,14 @@ class ReviewCard extends StatelessWidget {
   final String author;
   final String date;
   final int rating;
+  final double fontSize;
 
   const ReviewCard({
     required this.text,
     required this.author,
     required this.date,
     required this.rating,
+    required this.fontSize,
   });
 
   @override
@@ -243,21 +290,24 @@ class ReviewCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 16.0,fontWeight: FontWeight.bold,))),
-              SizedBox(width: 10),
+              Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize * 0.7, fontWeight: FontWeight.bold))),
+              SizedBox(width: 10.0),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.0,vertical: 5.0),
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
                 decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.circular(5.0)
+                  color: Colors.green,
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.star, color: CustColors.white, size: 20),
-                    SizedBox(width: 1,),
-                    Text('$rating', style:Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustColors.white,fontWeight: FontWeight.bold)),
+                    Icon(Icons.star, color: CustColors.white, size: fontSize * 0.7),
+                    SizedBox(width: 1),
+                    Text(
+                      '$rating',
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustColors.white, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
@@ -273,13 +323,13 @@ class ReviewCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '$author',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF757575)),
+                      style: TextStyle(fontSize: fontSize * 0.5, color: Color(0xFF757575)),
                     ),
                   ),
                   Expanded(
                     child: Text(
                       '$date',
-                      style: TextStyle(fontSize: 12, color: Color(0xFF757575)),
+                      style: TextStyle(fontSize: fontSize * 0.5, color: Color(0xFF757575)),
                     ),
                   ),
                 ],
@@ -293,25 +343,29 @@ class ReviewCard extends StatelessWidget {
 }
 
 class BottomSection extends StatelessWidget {
+  final double fontSize;
+
+  const BottomSection({required this.fontSize});
+
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
       margin: EdgeInsets.only(top: 6.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Made for India',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: fontSize * 1.5, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 2.0),
           Text(
             'Native is a line of user-friendly innovations here to level up industry standards. Each product has been extensively researched, rigorously tested, & built from scratch alongside industry experts.',
-            style: TextStyle(fontSize: 14, color: Color(0xFF757575)),
+            style: TextStyle(fontSize: fontSize * 0.8, color: Color(0xFF757575)),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 20.0),
           Row(
             children: [
               NetworkImage(imageUrl: 'https://storage.googleapis.com/a1aa/image/0rl47qjrXyzf5EC1o4pn3nP7tHWELUYQX1zM4uiaRdA.jpg'),
@@ -332,10 +386,10 @@ class NetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(right: 10),
+      padding: EdgeInsets.only(right: 10.0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(imageUrl, width: 150, height: 150, fit: BoxFit.cover),
+        borderRadius: BorderRadius.circular(8.0),
+        child: Image.network(imageUrl, width: 150.0, height: 150.0, fit: BoxFit.cover),
       ),
     );
   }

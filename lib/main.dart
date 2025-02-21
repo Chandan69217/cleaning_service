@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         statusBarColor: Colors.transparent));
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: themeData(),
+        theme: themeData(context),
         home: SplashScreen(),
     );
   }
