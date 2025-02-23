@@ -1,5 +1,5 @@
 import 'package:cleaning_service/models/data.dart';
-import 'package:cleaning_service/screens/dashboard_screen.dart';
+import 'package:cleaning_service/screens/dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -73,17 +73,14 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
 
       Position position = await Geolocator.getCurrentPosition(
           locationSettings: LocationSettings(accuracy: LocationAccuracy.high));
-      Data.user_position = position;
 
       List<Placemark> placemarks = await placemarkFromCoordinates(
           position.latitude, position.longitude);
-      Data.user_placemarks = placemarks;
 
       Placemark place = placemarks.first;
 
       String formattedAddress = await getAddressFromCoordinates(position.latitude, position.longitude);
-      Data.address = formattedAddress;
-
+      Data.initialize(addr:formattedAddress,placemarks: placemarks,position: position );
       setState(() {
         locationMessage = formattedAddress;
         isFetchingLocation = false;
@@ -183,7 +180,7 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
               ),
               SizedBox(height: screenHeight * 0.01),
               Text(
-                '${Data.user_placemarks.first.thoroughfare}',
+                '${Data.user_placemarks!=null?Data.user_placemarks!.first.thoroughfare:'N/A'}',
                 style: TextStyle(
                   fontSize: fontSize * 1.1,
                   fontWeight: FontWeight.bold,

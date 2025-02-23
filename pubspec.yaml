@@ -80,6 +80,8 @@ flutter:
   # example:
   assets:
     - assets/fonts/
+    - assets/icons/
+    - assets/pictures/
 
   fonts:
      - family: proxima_nova
@@ -87,6 +89,7 @@ flutter:
          - asset: assets/fonts/Proxima Nova Alt Regular.otf
          - asset: assets/fonts/Proxima Nova Semibold.otf
          - asset: assets/fonts/ProximaNova-Regular.otf
+         - asset: assets/fonts/Proxima Nova Alt Bold.otf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

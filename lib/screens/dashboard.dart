@@ -23,6 +23,10 @@ class _DashboardState extends State<Dashboard> {
   }
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    double fontSize = screenWidth * 0.03;
+    double iconSize = screenWidth * 0.045;
     return Scaffold(
       backgroundColor:Color(0xFFF9F9F9),
       body: SafeArea(
@@ -31,11 +35,11 @@ class _DashboardState extends State<Dashboard> {
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: CustColors.primary,
           type: BottomNavigationBarType.fixed,
-          selectedFontSize: 12.0,
-          unselectedFontSize: 12.0,
+          selectedFontSize: fontSize,
+          unselectedFontSize: fontSize,
           selectedItemColor:CustColors.white,
           unselectedItemColor: Colors.grey,
-          iconSize: 22.0,
+          iconSize: iconSize,
           selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
           // unselectedItemColor: ColorTheme.Gray,
           onTap: (selectedIndex){

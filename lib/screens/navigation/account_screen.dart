@@ -48,31 +48,33 @@ class _AccountScreenState extends State<AccountScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-            child: GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              crossAxisSpacing: screenWidth * 0.02,
-              mainAxisSpacing: screenHeight * 0.02,
-              children: [
-                _buildCard(Icons.content_paste, 'My bookings', fontSizeScaling),
-                _buildCard(Icons.devices, 'Native devices', fontSizeScaling),
-                _buildCard(Icons.headset, 'Help & support', fontSizeScaling),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+              child: GridView.count(
+                crossAxisCount: 3,
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                crossAxisSpacing: screenWidth * 0.02,
+                mainAxisSpacing: screenHeight * 0.02,
+                children: [
+                  _buildCard(Icons.content_paste, 'My bookings', fontSizeScaling),
+                  _buildCard(Icons.devices, 'Native devices', fontSizeScaling),
+                  _buildCard(Icons.headset, 'Help & support', fontSizeScaling),
+                ],
+              ),
             ),
-          ),
-          SizedBox(height: screenHeight * 0.01),
-          Expanded(
-            child: Container(
+            SizedBox(height: screenHeight * 0.01),
+            Container(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               color: Colors.white,
               child: Column(
                 children: [
                   ListView(
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     children: [
                       _buildListItem(Icons.description, 'My Plans', fontSizeScaling),
@@ -105,8 +107,8 @@ class _AccountScreenState extends State<AccountScreen> {
                       ),
                     ),
                   ),
-                  Spacer(),
                   // Footer
+                  SizedBox(height: screenHeight * 0.04),
                   Text(
                     'Version 7.5.91 R455',
                     style: TextStyle(color: Colors.grey, fontSize: 12 * fontSizeScaling),
@@ -115,8 +117,8 @@ class _AccountScreenState extends State<AccountScreen> {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
