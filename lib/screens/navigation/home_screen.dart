@@ -1,7 +1,10 @@
 import 'dart:async';
 
-import 'package:cleaning_service/screens/all_service_screen.dart';
+import 'package:cleaning_service/screens/all_service_list_screen.dart';
 import 'package:cleaning_service/screens/cart_screen.dart';
+import 'package:cleaning_service/screens/search_screen.dart';
+import 'package:cleaning_service/screens/service_details_screen.dart';
+import 'package:cleaning_service/screens/service_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -497,8 +500,10 @@ import '../../utilities/cust_colors.dart';
 class TopMenuSection extends StatelessWidget {
   final double fontSize;
   final double iconSize;
+  final VoidCallback? onSearch;
+  final VoidCallback? onCart;
 
-  const TopMenuSection({required this.fontSize, required this.iconSize});
+  const TopMenuSection({this.onSearch,this.onCart,required this.fontSize, required this.iconSize});
 
   @override
   Widget build(BuildContext context) {
@@ -577,7 +582,7 @@ class TopMenuSection extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: GestureDetector(
-                    onTap: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> EmptyCartScreen())),
+                    onTap: onCart,
                     child: Container(
                       padding: EdgeInsets.all(5.0),
                       decoration: BoxDecoration(
@@ -593,26 +598,29 @@ class TopMenuSection extends StatelessWidget {
           ),
 
           // Search Bar
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
-            padding: EdgeInsets.symmetric(horizontal: 10.0),
-            height: screenHeight * 0.05,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(screenWidth*0.015 ),
-              boxShadow: [BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 3,
-                spreadRadius: 1
-                // spreadRadius: 1,
-              )],
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.search,color: Colors.black.withOpacity(0.4),),
-                SizedBox(width: 8.0,),
-                Text('Search for service',style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black.withOpacity(0.4)),),
-              ],
+          GestureDetector(
+            onTap: onSearch,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
+              padding: EdgeInsets.symmetric(horizontal: 10.0),
+              height: screenHeight * 0.05,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(screenWidth*0.015 ),
+                boxShadow: [BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 3,
+                  spreadRadius: 1
+                  // spreadRadius: 1,
+                )],
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.search,color: Colors.black.withOpacity(0.4),),
+                  SizedBox(width: 8.0,),
+                  Text('Search for service',style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black.withOpacity(0.4)),),
+                ],
+              ),
             ),
           ),
 
@@ -670,6 +678,9 @@ class MenuItems extends StatelessWidget{
 }
 
 class CategorySlideCard extends StatefulWidget {
+  final VoidCallback? onPressed;
+
+  const CategorySlideCard({super.key,this.onPressed});
   @override
   _CategorySlideCardState createState() => _CategorySlideCardState();
 }
@@ -801,7 +812,7 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
                 width: (screenHeight*0.23)*0.55,
                 height: (screenHeight*0.23)*0.21,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: widget.onPressed,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -871,7 +882,10 @@ class HomeScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            TopMenuSection(fontSize: fontSize, iconSize: iconSize),
+            TopMenuSection(fontSize: fontSize, iconSize: iconSize,
+              onCart: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> EmptyCartScreen())),
+              onSearch: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> SearchScreen(),)),
+            ),
             Container(
               margin: EdgeInsets.only(top: screenWidth * 0.01),
               padding: EdgeInsets.symmetric(horizontal: screenWidth *0.05, vertical: screenWidth*0.02),
@@ -879,14 +893,30 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   CategorizedService(
+                    onItemClicked: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,)));
+                    },
+                    onMoreOptionClicked: (){
+                      showServicesOptions(context);
+                    },
                     label: 'Most booked service',
                     fontSize: fontSize,
                     imagesUrl: imageUrls,
                   ),
                   SizedBox(height: screenHeight * 0.02),
-                  CategorySlideCard(),
+                  CategorySlideCard(
+                    onPressed: (){
+                      showServiceDetails(context);
+                    },
+                  ),
                   SizedBox(height: screenHeight * 0.02),
                   CategorizedService(
+                    onItemClicked: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,)));
+                    },
+                    onMoreOptionClicked: (){
+                      showServicesOptions(context);
+                    },
                     label: 'Quick home repairs',
                     fontSize: fontSize,
                     imagesUrl: imageUrls,
@@ -907,7 +937,9 @@ class CategorizedService extends StatelessWidget {
   final double fontSize;
   final label;
   List<String> imagesUrl;
-  CategorizedService({required this.label, required this.fontSize, required this.imagesUrl});
+  final VoidCallback? onItemClicked;
+  final VoidCallback? onMoreOptionClicked;
+  CategorizedService({this.onMoreOptionClicked,this.onItemClicked,required this.label, required this.fontSize, required this.imagesUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -929,7 +961,7 @@ class CategorizedService extends StatelessWidget {
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize),
               ),
               TextButton(
-                onPressed: () { Navigator.of(context).push(MaterialPageRoute(builder: (context) => ShowAllServices())); },
+                onPressed: onMoreOptionClicked,
                 child: Text('See all', style: TextStyle(fontSize: fontSize*0.8)),
               ),
             ],
@@ -941,6 +973,7 @@ class CategorizedService extends StatelessWidget {
               itemCount: imagesUrl.length,
               itemBuilder: (context, index) {
                 return CategoryCard(
+                  onTap:onItemClicked,
                   image: imagesUrl[index],
                   label: 'Intense bathroom cleaning',
                   rating: '4.78(1.9M)',
@@ -961,66 +994,70 @@ class CategoryCard extends StatelessWidget {
   final String label;
   final String rating;
   final String price;
-  CategoryCard({required this.image, required this.label, required this.rating, required this.price,});
+  final VoidCallback? onTap;
+  CategoryCard({this.onTap,required this.image, required this.label, required this.rating, required this.price,});
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return SizedBox(
-      width: screenWidth*0.35,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10.0),
-            child: Image.network(
-              image,
-              width: screenWidth * 0.3,
-              height: screenWidth * 0.3,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(height: 8.0),
-          Expanded(
-            flex: 2,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontSize: screenWidth * 0.035,
-                fontWeight: FontWeight.w600,
-                height: 1.1,
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: screenWidth*0.35,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10.0),
+              child: Image.network(
+                image,
+                width: screenWidth * 0.3,
+                height: screenWidth * 0.3,
+                fit: BoxFit.cover,
               ),
             ),
-          ),
-          // Spacer(),
-          Flexible(
-            fit: FlexFit.loose,
-            child: Row(
-              children: [
-                Icon(Icons.star, size: 15),
-                SizedBox(width: 2),
-                Text(
-                  rating,
-                  style: TextStyle(fontSize: screenWidth < 600 ? 12 : 14,height: 1.1),
+            SizedBox(height: 8.0),
+            Expanded(
+              flex: 2,
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: screenWidth * 0.035,
+                  fontWeight: FontWeight.w600,
+                  height: 1.1,
                 ),
-              ],
+              ),
             ),
-          ),
-          // SizedBox(height: 2),
-          Flexible(
-            fit: FlexFit.loose,
-            child: Row(
-              children: [
-                Icon(Icons.currency_rupee_rounded, size: 15),
-                SizedBox(width: 2),
-                Text(
-                  price,
-                  style: TextStyle(fontSize: screenWidth < 600 ? 12 : 14,height: 1.1),
-                ),
-              ],
+            // Spacer(),
+            Flexible(
+              fit: FlexFit.loose,
+              child: Row(
+                children: [
+                  Icon(Icons.star, size: 15),
+                  SizedBox(width: 2),
+                  Text(
+                    rating,
+                    style: TextStyle(fontSize: screenWidth < 600 ? 12 : 14,height: 1.1),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            // SizedBox(height: 2),
+            Flexible(
+              fit: FlexFit.loose,
+              child: Row(
+                children: [
+                  Icon(Icons.currency_rupee_rounded, size: 15),
+                  SizedBox(width: 2),
+                  Text(
+                    price,
+                    style: TextStyle(fontSize: screenWidth < 600 ? 12 : 14,height: 1.1),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cleaning_service/screens/all_service_list_screen.dart';
 import 'package:flutter/material.dart';
 
 class EmptyCartScreen extends StatelessWidget {
@@ -57,7 +58,7 @@ class EmptyCartScreen extends StatelessWidget {
                 width: screenWidth * 0.45,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Add functionality to explore services
+                    Navigator.of(context).pop();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
@@ -75,8 +76,8 @@ class EmptyCartScreen extends StatelessWidget {
                   child: Text(
                     'Explore Services',
                     style: TextStyle(
-                      fontSize: screenWidth * 0.04, // Font size responsive
-                      fontWeight: FontWeight.w500,
+                      fontSize: screenWidth * 0.038, // Font size responsive
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ),
