@@ -1,3 +1,4 @@
+import 'package:cleaning_service/screens/navigation/bookings_screen.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -61,7 +62,9 @@ class _AccountScreenState extends State<AccountScreen> {
                 crossAxisSpacing: screenWidth * 0.02,
                 mainAxisSpacing: screenHeight * 0.02,
                 children: [
-                  _buildCard(Icons.content_paste, 'My bookings', fontSizeScaling),
+                  _buildCard(onTap: (){
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=>BookingsScreen()));
+                  },Icons.content_paste, 'My bookings', fontSizeScaling),
                   _buildCard(Icons.devices, 'Native devices', fontSizeScaling),
                   _buildCard(Icons.headset, 'Help & support', fontSizeScaling),
                 ],
@@ -124,32 +127,35 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
 
-  Widget _buildCard(IconData icon, String label, double fontSizeScaling) {
-    return Container(
-      padding: EdgeInsets.all(fontSizeScaling*10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(flex: 1, child: Icon(icon, size: 20 * fontSizeScaling)),
-          SizedBox(height: 20),
-          Expanded(
-            flex: 2,
-            child: Center(
-              child: Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14 * fontSizeScaling,
+  Widget _buildCard(IconData icon, String label, double fontSizeScaling,{VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(fontSizeScaling*10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(flex: 1, child: Icon(icon, size: 20 * fontSizeScaling)),
+            SizedBox(height: 20),
+            Expanded(
+              flex: 2,
+              child: Center(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14 * fontSizeScaling,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
