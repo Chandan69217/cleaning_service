@@ -1,4 +1,5 @@
 import 'package:cleaning_service/models/data.dart';
+import 'package:cleaning_service/screens/authentication/login_screen.dart';
 import 'package:cleaning_service/screens/dashboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,15 +7,22 @@ import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../utilities/const.dart';
 import '../../utilities/cust_colors.dart';
+
+
 
 class SplashScreen extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth * 0.08;
-    futureCall(context);
+    WidgetsBinding.instance.addPostFrameCallback((duration){
+      futureCall(context);
+    });
+
     return Scaffold(
       backgroundColor: CustColors.primary,
       body: Center(
@@ -27,11 +35,20 @@ class SplashScreen extends StatelessWidget{
     );
   }
 
-  futureCall(BuildContext context){
-    Future.delayed(Duration(seconds: 1),()=> Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_)=>LocationFetchScreen())));
+  futureCall(BuildContext context)async{
+    bool isLoggedIn = await Pref.instance.getBool(Consts.isLogin) ?? false;
+    bool isSkipped = await Pref.instance.getBool(Consts.isSkipped) ?? false;
+    await Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn || isSkipped))),);
+  }
+
+  Widget _navigateToNextScreen(bool isLoggedIn) {
+    return isLoggedIn
+        ? LocationFetchScreen()
+        : LoginScreen();
   }
 
 }
+
 
 
 class LocationFetchScreen extends StatefulWidget {
