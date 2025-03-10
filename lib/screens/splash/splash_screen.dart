@@ -37,8 +37,7 @@ class SplashScreen extends StatelessWidget{
 
   futureCall(BuildContext context)async{
     bool isLoggedIn = await Pref.instance.getBool(Consts.isLogin) ?? false;
-    bool isSkipped = await Pref.instance.getBool(Consts.isSkipped) ?? false;
-    await Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn || isSkipped))),);
+    await Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn))),);
   }
 
   Widget _navigateToNextScreen(bool isLoggedIn) {
@@ -52,6 +51,7 @@ class SplashScreen extends StatelessWidget{
 
 
 class LocationFetchScreen extends StatefulWidget {
+
   @override
   _LocationFetchScreenState createState() => _LocationFetchScreenState();
 }

@@ -1,7 +1,9 @@
+import 'package:cleaning_service/screens/authentication/logged_out_screen.dart';
 import 'package:cleaning_service/screens/navigation/account_screen.dart';
 import 'package:cleaning_service/screens/navigation/bookings_screen.dart';
 import 'package:cleaning_service/screens/navigation/home_screen.dart';
 import 'package:cleaning_service/screens/navigation/reward_screen.dart';
+import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +17,16 @@ class Dashboard extends StatefulWidget{
 
 class _DashboardState extends State<Dashboard> {
   int _currentIndex = 0;
-  final List<Widget> _screens = [HomeScreen(),BookingsScreen(),RewardsScreen(),AccountScreen()];
+  late bool _isLoggedIn;
+  final List<Widget> _screens = [LoggedInHomeScreen(),BookingsScreen(),RewardsScreen(),AccountScreen()];
+  final List<Widget> _skippedScreens = [SkipeedHomeScreen(),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check booking information',),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check your reward information',),SkippedAccountScreen(),];
   @override
   void initState() {
     super.initState();
+    _isLoggedIn = Pref.instance.getBool(Consts.isLogin)??false;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: [SystemUiOverlay.top,SystemUiOverlay.bottom]);
   }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -30,7 +36,7 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       backgroundColor:Color(0xFFF9F9F9),
       body: SafeArea(
-        child: _screens[_currentIndex],
+        child: _isLoggedIn ? _screens[_currentIndex] : _skippedScreens[_currentIndex],
       ),
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: CustColors.primary,
