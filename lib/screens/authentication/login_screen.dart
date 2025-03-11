@@ -48,7 +48,10 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Stack(
               children: [
                 ClipPath(
-                  clipper: TopWaveClipper(),
+                  clipper: TopWaveClipper(
+                    waveDeep: (screenHeight * 0.3)*0.38,
+                    waveDeep2: (screenHeight * 0.3)*0.01
+                  ),
                   child: Container(
                     // padding: const EdgeInsets.only(bottom: 450),
                     color: Colors.blue.withOpacity(.8),
@@ -57,7 +60,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 ClipPath(
-                  clipper: TopWaveClipper(waveDeep: 0, waveDeep2: 100),
+                  clipper: TopWaveClipper( waveDeep2: (screenHeight * 0.3)*0.38,
+                      waveDeep: (screenHeight * 0.3)*0.01),
                   child: Container(
                       // padding: const EdgeInsets.only(bottom: 50),
                       color: Colors.blue.withOpacity(.3),
@@ -69,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              if(widget.requestLogin )
+                              if (widget.requestLogin)
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 8.0),
@@ -84,30 +88,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               Spacer(),
                               Container(
-                                margin: EdgeInsets.symmetric(vertical: screenWidth * 0.05),
+                                margin: EdgeInsets.symmetric(
+                                    vertical: screenWidth * 0.05),
                                 height: screenWidth * 0.07,
                                 width: screenWidth * 0.18,
                                 child: TextButton(
-                                  onPressed: ()async {
+                                  onPressed: () async {
                                     showRegistrationDialog(context);
                                   },
                                   child: Text(
                                     'Register',
-                                    style: TextStyle(fontSize: (screenWidth * 0.2) * 0.16, fontWeight: FontWeight.normal),
+                                    style: TextStyle(
+                                        fontSize: (screenWidth * 0.2) * 0.16,
+                                        fontWeight: FontWeight.normal),
                                   ),
                                   style: TextButton.styleFrom(
                                     foregroundColor: CustColors.primary,
                                     overlayColor: Colors.transparent,
                                     padding: EdgeInsets.zero,
-                                    backgroundColor: Colors.black.withOpacity(0.1),
+                                    backgroundColor:
+                                        Colors.black.withOpacity(0.1),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(20.0),
-                                      side: BorderSide(width: 1, color: Colors.black12),
+                                      side: BorderSide(
+                                          width: 1, color: Colors.black12),
                                     ),
                                   ),
                                 ),
                               ),
-                              SizedBox(width: screenWidth *0.034,)
+                              SizedBox(
+                                width: screenWidth * 0.034,
+                              )
                             ],
                           ),
                         ),
@@ -240,63 +251,74 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Expanded(
-            child: Stack(
-              alignment: Alignment.bottomCenter,
-              children: [
-                ClipPath(
-                  clipper: BottomWaveClipper(),
-                  child: Container(
-                    // padding: const EdgeInsets.only(bottom: 450),
-                    color: Colors.blue.withOpacity(.8),
-                    height: screenHeight * 0.3,
-                    alignment: Alignment.center,
-                  ),
-                ),
-                ClipPath(
-                  clipper: BottomWaveClipper(waveDeep: 0, waveDeep2: 100),
-                  child: Container(
-                    // padding: const EdgeInsets.only(bottom: 50),
-                    color: Colors.blue.withOpacity(.3),
-                    height: screenHeight * 0.25,
-                    alignment: Alignment.center,
-                  ),
-                ),
-                if (!widget.requestLogin)
-                  Positioned(
-                    bottom: screenWidth * 0.1,
-                    right: screenWidth * 0.05,
-                    child: SizedBox(
-                      height: screenWidth * 0.07,
-                      width: screenWidth * 0.18,
-                      child: TextButton(
-                        onPressed: () async {
-                          Pref.instance.setBool(Consts.isSkipped, true);
-                          Pref.instance.setBool(Consts.isLogin, false);
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(
-                                  builder: (context) => LocationFetchScreen()),
-                              (route) => false);
-                        },
-                        child: Text(
-                          'Skip',
-                          style: TextStyle(
-                              fontSize: (screenWidth * 0.2) * 0.16,
-                              fontWeight: FontWeight.normal),
-                        ),
-                        style: TextButton.styleFrom(
-                          foregroundColor: CustColors.primary,
-                          overlayColor: Colors.transparent,
-                          padding: EdgeInsets.zero,
-                          backgroundColor: Colors.black.withOpacity(0.1),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            side: BorderSide(width: 1, color: Colors.black12),
-                          ),
-                        ),
-                      ),
+            child: SafeArea(
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  ClipPath(
+                    clipper: BottomWaveClipper(
+                        waveDeep: (screenHeight * 0.3)*0.38,
+                        waveDeep2: (screenHeight * 0.3)*0.01
+                    ),
+                    child: Container(
+                      // padding: const EdgeInsets.only(bottom: 450),
+                      color: Colors.blue.withOpacity(.8),
+                      height: screenHeight * 0.3,
+                      alignment: Alignment.center,
                     ),
                   ),
-              ],
+                  ClipPath(
+                    clipper: BottomWaveClipper( waveDeep2: (screenHeight * 0.3)*0.38,
+                        waveDeep: (screenHeight * 0.3)*0.01),
+                    child: Container(
+                      // padding: const EdgeInsets.only(bottom: 50),
+                      color: Colors.blue.withOpacity(.3),
+                      height: screenHeight * 0.25,
+                      alignment: Alignment.center,
+                      child: !widget.requestLogin
+                          ? Align(
+                        alignment: Alignment.bottomRight,
+                            child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: screenWidth * 0.05,horizontal: screenWidth * 0.05),
+                              height: screenWidth * 0.07,
+                              width: screenWidth * 0.18,
+                              child: TextButton(
+                                onPressed: () async {
+                                  Pref.instance.setBool(Consts.isSkipped, true);
+                                  Pref.instance.setBool(Consts.isLogin, false);
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              LocationFetchScreen()),
+                                      (route) => false);
+                                },
+                                child: Text(
+                                  'Skip',
+                                  style: TextStyle(
+                                      fontSize: (screenWidth * 0.2) * 0.16,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                                style: TextButton.styleFrom(
+                                  foregroundColor: CustColors.primary,
+                                  overlayColor: Colors.transparent,
+                                  padding: EdgeInsets.zero,
+                                  backgroundColor:
+                                      Colors.black.withOpacity(0.1),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                    side: BorderSide(
+                                        width: 1, color: Colors.black12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
