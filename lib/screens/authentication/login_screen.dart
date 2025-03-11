@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:cleaning_service/screens/authentication/registration_screen.dart';
 import 'package:cleaning_service/screens/splash/splash_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
@@ -15,7 +16,7 @@ import '../../widgets/cust_loader.dart';
 
 class LoginScreen extends StatefulWidget {
   final bool requestLogin;
-  const LoginScreen({super.key,this.requestLogin = false});
+  const LoginScreen({super.key, this.requestLogin = false});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -35,226 +36,273 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-@override
-Widget build(BuildContext context) {
-  double screenWidth = MediaQuery.of(context).size.width;
-  double screenHeight = MediaQuery.of(context).size.height;
-  bool isLargeScreen = screenWidth > 600;
-  return Scaffold(
-    body: Column(
-      children: [
-        Expanded(
-          child: Stack(
-            children: [
-              ClipPath(
-                clipper: TopWaveClipper(),
-                child: Container(
-                  // padding: const EdgeInsets.only(bottom: 450),
-                  color: Colors.blue.withOpacity(.8),
-                  height: screenHeight * 0.3,
-                  alignment: Alignment.center,
-
-                ),
-              ),
-              ClipPath(
-                clipper: TopWaveClipper(waveDeep: 0, waveDeep2: 100),
-                child: Container(
-                  // padding: const EdgeInsets.only(bottom: 50),
-                  color: Colors.blue.withOpacity(.3),
-                  height: screenHeight * 0.25,
-                  alignment: Alignment.center,
-                  child: widget.requestLogin ? SafeArea(child: Align(alignment:Alignment.topLeft,child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: IconButton(onPressed: (){
-                      Navigator.of(context).pop(context);
-                    }, icon: Icon(Icons.arrow_back,color: Colors.black,)),
-                  ))):null,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: CustColors.primary,
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                    width: screenWidth * 0.12,
-                    height: screenWidth * 0.12,
-                    child: Center(
-                      child: Text(
-                        'CS',
-                        style: TextStyle(
-                            fontSize: (screenWidth * 0.12) * 0.4,
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-                  RichText(
-                    text: TextSpan(
-                        text: 'Cleaning',
-                        style: TextStyle(
-                            fontSize: screenWidth * 0.06,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
-                        children: [
-                          TextSpan(
-                            text: '\nService',
-                            style: TextStyle(
-                              fontSize: screenWidth * 0.05,
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
-                          )
-                        ]),
-                    textAlign: TextAlign.start,
-                  )
-                ],
-              ),
-              SizedBox(height: isLargeScreen ? 10 : 5),
-              Text('Your Home Service Expert',
-                  style: TextStyle(
-                      fontSize: screenWidth * 0.05,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black)),
-              Text('Quick • Affordable • Trusted',
-                  style: TextStyle(
-                      fontSize: screenWidth * 0.032, color: Colors.grey)),
-              SizedBox(height: isLargeScreen ? 30 : 20),
-              Container(
-                width: screenWidth * 0.8,
-                child: TextFormField(
-                  controller: _mobileNoTxtController,
-                  keyboardType: TextInputType.phone,
-                  cursorColor: Colors.black,
-                  textInputAction: TextInputAction.done,
-                  maxLength: 10,
-                  textAlignVertical: TextAlignVertical.center,
-                  style: TextStyle(fontSize: (screenWidth * 0.14) * 0.3),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your mobile number';
-                    }else if(value.length<10){
-                      return "Mobile no must be in 10 digit number";
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    counterText: '',
-                    prefixIcon: Icon(Icons.phone_android_outlined),
-                    hintText: 'Enter Mobile Number',
-                    hintStyle:
-                    TextStyle(fontSize: (screenWidth * 0.14) * 0.3),
-                    enabledBorder:  OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: CustColors.primary),
-                    ),  focusedBorder:  OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: CustColors.primary),
-                  ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: CustColors.primary),
-                    ),
+  @override
+  Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+    bool isLargeScreen = screenWidth > 600;
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                ClipPath(
+                  clipper: TopWaveClipper(),
+                  child: Container(
+                    // padding: const EdgeInsets.only(bottom: 450),
+                    color: Colors.blue.withOpacity(.8),
+                    height: screenHeight * 0.3,
+                    alignment: Alignment.center,
                   ),
                 ),
-              ),
-              SizedBox(height: isLargeScreen ? 50 : 40.0),
-              _isLoading
-                  ? CustLoader()
-                  : SizedBox(
-                width: screenWidth * 0.8,
-                child: ElevatedButton(
-                  onPressed: _getVerificationCode,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigoAccent,
-                    foregroundColor: Colors.white,
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Center(
-                      child: Text(
-                        'Get Verification Code',
-                        style:
-                        TextStyle(fontSize: (screenWidth * 0.13) * 0.3),
+                ClipPath(
+                  clipper: TopWaveClipper(waveDeep: 0, waveDeep2: 100),
+                  child: Container(
+                      // padding: const EdgeInsets.only(bottom: 50),
+                      color: Colors.blue.withOpacity(.3),
+                      height: screenHeight * 0.25,
+                      alignment: Alignment.center,
+                      child: Align(
+                        alignment: Alignment.topLeft,
+                        child: SafeArea(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              if(widget.requestLogin )
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: IconButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(context);
+                                      },
+                                      icon: Icon(
+                                        Icons.arrow_back,
+                                        color: Colors.black,
+                                      )),
+                                ),
+                              Spacer(),
+                              Container(
+                                margin: EdgeInsets.symmetric(vertical: screenWidth * 0.05),
+                                height: screenWidth * 0.07,
+                                width: screenWidth * 0.18,
+                                child: TextButton(
+                                  onPressed: ()async {
+                                    showRegistrationDialog(context);
+                                  },
+                                  child: Text(
+                                    'Register',
+                                    style: TextStyle(fontSize: (screenWidth * 0.2) * 0.16, fontWeight: FontWeight.normal),
+                                  ),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: CustColors.primary,
+                                    overlayColor: Colors.transparent,
+                                    padding: EdgeInsets.zero,
+                                    backgroundColor: Colors.black.withOpacity(0.1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                      side: BorderSide(width: 1, color: Colors.black12),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: screenWidth *0.034,)
+                            ],
+                          ),
+                        ),
                       )),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              ClipPath(
-                clipper: BottomWaveClipper(),
-                child: Container(
-                  // padding: const EdgeInsets.only(bottom: 450),
-                  color: Colors.blue.withOpacity(.8),
-                  height: screenHeight * 0.3,
-                  alignment: Alignment.center,
-                ),
-              ),
-              ClipPath(
-                clipper: BottomWaveClipper(waveDeep: 0, waveDeep2: 100),
-                child: Container(
-                  // padding: const EdgeInsets.only(bottom: 50),
-                  color: Colors.blue.withOpacity(.3),
-                  height: screenHeight * 0.25,
-                  alignment: Alignment.center,
-                ),
-              ),
-
-              if(!widget.requestLogin)Positioned(
-                bottom: screenWidth * 0.1,
-                right: screenWidth * 0.05,
-                child: SizedBox(
-                  height: screenWidth * 0.07,
-                  width: screenWidth * 0.18,
-                  child: TextButton(
-                    onPressed: ()async {
-                      Pref.instance.setBool(Consts.isSkipped, true);
-                      Pref.instance.setBool(Consts.isLogin, false);
-                      Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=> LocationFetchScreen()),(route)=>false);
-                    },
-                    child: Text(
-                      'Skip',
-                      style: TextStyle(fontSize: (screenWidth * 0.2) * 0.16, fontWeight: FontWeight.normal),
+          Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: CustColors.primary,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      width: screenWidth * 0.12,
+                      height: screenWidth * 0.12,
+                      child: Center(
+                        child: Text(
+                          'CS',
+                          style: TextStyle(
+                              fontSize: (screenWidth * 0.12) * 0.4,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
-                    style: TextButton.styleFrom(
-                      foregroundColor: CustColors.primary,
-                      overlayColor: Colors.transparent,
-                      padding: EdgeInsets.zero,
-                      backgroundColor: Colors.black.withOpacity(0.1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                        side: BorderSide(width: 1, color: Colors.black12),
+                    SizedBox(width: 10.0),
+                    RichText(
+                      text: TextSpan(
+                          text: 'Cleaning',
+                          style: TextStyle(
+                              fontSize: screenWidth * 0.06,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                          children: [
+                            TextSpan(
+                              text: '\nService',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.05,
+                                fontWeight: FontWeight.normal,
+                                color: Colors.black,
+                              ),
+                            )
+                          ]),
+                      textAlign: TextAlign.start,
+                    )
+                  ],
+                ),
+                SizedBox(height: isLargeScreen ? 10 : 5),
+                Text('Your Home Service Expert',
+                    style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black)),
+                Text('Quick • Affordable • Trusted',
+                    style: TextStyle(
+                        fontSize: screenWidth * 0.032, color: Colors.grey)),
+                SizedBox(height: isLargeScreen ? 30 : 20),
+                Container(
+                  width: screenWidth * 0.8,
+                  child: TextFormField(
+                    controller: _mobileNoTxtController,
+                    keyboardType: TextInputType.phone,
+                    cursorColor: Colors.black,
+                    textInputAction: TextInputAction.done,
+                    maxLength: 10,
+                    textAlignVertical: TextAlignVertical.center,
+                    style: TextStyle(fontSize: (screenWidth * 0.14) * 0.3),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your mobile number';
+                      } else if (value.length < 10) {
+                        return "Mobile no must be in 10 digit number";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      counterText: '',
+                      prefixIcon: Icon(Icons.phone_android_outlined),
+                      hintText: 'Enter Mobile Number',
+                      hintStyle:
+                          TextStyle(fontSize: (screenWidth * 0.14) * 0.3),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: CustColors.primary),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: CustColors.primary),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: CustColors.primary),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: isLargeScreen ? 50 : 40.0),
+                _isLoading
+                    ? CustLoader()
+                    : SizedBox(
+                        width: screenWidth * 0.8,
+                        child: ElevatedButton(
+                          onPressed: _getVerificationCode,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.indigoAccent,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.zero,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Center(
+                              child: Text(
+                            'Get Verification Code',
+                            style:
+                                TextStyle(fontSize: (screenWidth * 0.13) * 0.3),
+                          )),
+                        ),
+                      ),
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+          Expanded(
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                ClipPath(
+                  clipper: BottomWaveClipper(),
+                  child: Container(
+                    // padding: const EdgeInsets.only(bottom: 450),
+                    color: Colors.blue.withOpacity(.8),
+                    height: screenHeight * 0.3,
+                    alignment: Alignment.center,
+                  ),
+                ),
+                ClipPath(
+                  clipper: BottomWaveClipper(waveDeep: 0, waveDeep2: 100),
+                  child: Container(
+                    // padding: const EdgeInsets.only(bottom: 50),
+                    color: Colors.blue.withOpacity(.3),
+                    height: screenHeight * 0.25,
+                    alignment: Alignment.center,
+                  ),
+                ),
+                if (!widget.requestLogin)
+                  Positioned(
+                    bottom: screenWidth * 0.1,
+                    right: screenWidth * 0.05,
+                    child: SizedBox(
+                      height: screenWidth * 0.07,
+                      width: screenWidth * 0.18,
+                      child: TextButton(
+                        onPressed: () async {
+                          Pref.instance.setBool(Consts.isSkipped, true);
+                          Pref.instance.setBool(Consts.isLogin, false);
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => LocationFetchScreen()),
+                              (route) => false);
+                        },
+                        child: Text(
+                          'Skip',
+                          style: TextStyle(
+                              fontSize: (screenWidth * 0.2) * 0.16,
+                              fontWeight: FontWeight.normal),
+                        ),
+                        style: TextButton.styleFrom(
+                          foregroundColor: CustColors.primary,
+                          overlayColor: Colors.transparent,
+                          padding: EdgeInsets.zero,
+                          backgroundColor: Colors.black.withOpacity(0.1),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                            side: BorderSide(width: 1, color: Colors.black12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   _getVerificationCode() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -294,7 +342,11 @@ Widget build(BuildContext context) {
           var responseMsg = rawData['responseMsg'];
           if (isSuccess) {
             var LoginOTP = rawData['data']['loginOTP'];
-            showSnackBar(context: context, title: responseMsg, message: "otp send to $mobileNo",contentType: ContentType.success);
+            showSnackBar(
+                context: context,
+                title: responseMsg,
+                message: "otp send to $mobileNo",
+                contentType: ContentType.success);
             showOtpDialog(context, onSubmit: verifyOTP);
           } else {
             showSnackBar(
@@ -356,7 +408,7 @@ Widget build(BuildContext context) {
               contentType: ContentType.success,
               message: responseMsg);
           Pref.instance.setBool(Consts.isLogin, true);
-          Pref.instance.setBool(Consts.isSkipped,false);
+          Pref.instance.setBool(Consts.isSkipped, false);
           var userToken = rawData['data']['loginToken'];
           Pref.instance.setString(Consts.token, userToken);
           Pref.instance.setString(Consts.mobileNo, mobileNo);
@@ -449,5 +501,3 @@ class BottomWaveClipper extends CustomClipper<Path> {
   @override
   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
 }
-
-
