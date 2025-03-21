@@ -1,9 +1,13 @@
+import 'package:cleaning_service/models/categories_service.dart';
+import 'package:cleaning_service/utilities/add_to_cart.dart';
+import 'package:cleaning_service/widgets/counter_button.dart';
+import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:flutter/material.dart';
-
 import '../utilities/cust_colors.dart';
 
 
-void showServiceDetails(BuildContext context){
+void showServiceDetails(BuildContext context,{Service? service}){
+
   showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -14,6 +18,7 @@ void showServiceDetails(BuildContext context){
       ),
       builder: (_){
         return _ServiceDetails(
+          service: service,
           onDismiss: (){
             Navigator.of(_).pop();
           },
@@ -22,61 +27,136 @@ void showServiceDetails(BuildContext context){
 }
 
 
-class _ServiceDetails extends StatelessWidget {
+class _ServiceDetails extends StatefulWidget {
   final VoidCallback? onDismiss;
-  _ServiceDetails({super.key, this.onDismiss});
+  final Service? service;
+
+  _ServiceDetails({super.key, this.onDismiss,this.service});
+
+  @override
+  State<_ServiceDetails> createState() => _ServiceDetailsState();
+}
+
+class _ServiceDetailsState extends State<_ServiceDetails> {
+  bool _isAdd = false;
+  int _itemQuantity = 0;
+  bool _isLoading = false;
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double fontSize = screenWidth / 375;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
+    return Stack(
+      alignment: Alignment.center,
+      fit: StackFit.loose,
       children: [
-        Padding(
-          padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
-          child: IconButton(
-              onPressed: onDismiss,
-              style: IconButton.styleFrom(
-                  foregroundColor: Colors.black,
-                  backgroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  )),
-              icon: Icon(
-                Icons.close_rounded,
-              )),
-        ),
-        Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(screenWidth * 0.05),
-                topRight: Radius.circular(screenWidth * 0.05)),
-            child: Container(
-              decoration: BoxDecoration(
-                color: CustColors.white,
+        Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
+            child: IconButton(
+                onPressed: widget.onDismiss,
+                style: IconButton.styleFrom(
+                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    )),
+                icon: Icon(
+                  Icons.close_rounded,
+                )),
+          ),
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(screenWidth * 0.05),
+                  topRight: Radius.circular(screenWidth * 0.05)),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: CustColors.white,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildAddProductUI(context),
+                      SizedBox(height: screenHeight * 0.01,),
+                      _buildShareUI(context),
+                      _buildFQAUI(context),
+                      _buildReviewSlider(context),
+                      _buildReviewList(context),
+                    ],
+                  ),
+                ),
               ),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildAddProductUI(context),
-                    SizedBox(height: screenHeight * 0.01,),
-                    _buildShareUI(context),
-                    _buildFQAUI(context),
-                    _buildReviewSlider(context),
-                    _buildReviewList(context),
-                  ],
+            ),
+          ),
+        ],
+      ),
+        StatefulBuilder(
+          builder: (_,refresh)=>Visibility(
+            visible: _isAdd,
+            child: Positioned(
+              bottom: 0.0,
+              child: Container(
+                width: screenWidth,
+                height: screenWidth * 0.16,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1 ),
+                    offset: Offset(0, -2),
+                    blurRadius: 4,
+                  )]
+                ),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05,vertical: screenWidth * 0.02),
+                child: _isLoading ?CustLoader(
+                  color: Colors.indigoAccent,
+                ):ElevatedButton(
+                  onPressed:()async{
+                    if(_isAdd && _itemQuantity > 0){
+                      refresh((){
+                        _isLoading = true;
+                      });
+                     var status =  await addToCart(context: context, serviceId: widget.service!.id, qty: _itemQuantity, price: widget.service!.price.toDouble());
+                      if(status){
+                        refresh((){
+                          _isAdd = false;
+                          _isLoading = false;
+                        });
+                        Navigator.of(context).pop();
+                      }else{
+                        refresh((){
+                          _isLoading = false;
+                        });
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.indigoAccent,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Center(
+                      child: Text(
+                        'Done',
+                        style:
+                        TextStyle(fontSize: (screenWidth * 0.13) * 0.3),
+                      )),
                 ),
               ),
             ),
           ),
         ),
-      ],
+    ]
     );
   }
-
 
   Widget _buildAddProductUI(BuildContext context){
     double screenWidth = MediaQuery.of(context).size.width;
@@ -106,14 +186,15 @@ class _ServiceDetails extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
+                Flexible(
+                  fit: FlexFit.tight,
                   flex: 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Service Info Section
                       Text(
-                        'Flush tank repair (external PVC)',
+                        widget.service != null ? widget.service!.serviceName : 'N/A',
                         style: TextStyle(
                             fontSize: screenWidth * 0.045,
                             fontWeight: FontWeight.w600,
@@ -141,7 +222,7 @@ class _ServiceDetails extends StatelessWidget {
                       Row(
                         children: [
                           Text(
-                            '₹99',
+                            widget.service != null ? '₹${widget.service!.price}':'₹0.00',
                             style: TextStyle(
                                 fontSize: screenWidth * 0.043,
                                 fontWeight: FontWeight.w600,
@@ -181,34 +262,55 @@ class _ServiceDetails extends StatelessWidget {
                   ),
                 ),
 
-                SizedBox(
-                  width: screenWidth * 0.08,
-                ),
+                Spacer(),
                 // Add Button
-                Expanded(
+               Flexible(
                   flex: 1,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      side: BorderSide(
-                          color: Colors.black12, width: 0.5),
-                      foregroundColor: Colors.black,
-                      elevation: 1,
-                      overlayColor: Colors.black12,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            screenWidth * 0.015),
-                      ),
-                      padding: EdgeInsets.zero,
-                    ),
-                    onPressed: () {
-                      // Handle the button press action
+                  fit: FlexFit.loose,
+                  child:  _isAdd?CounterButton(
+                    initialValue: _itemQuantity,
+                    onChanged: (newValue){
+                      setState(() {
+                        if(newValue < 1){
+                          _isAdd = false;
+                          _itemQuantity = 1;
+                        }else{
+                          _itemQuantity = newValue;
+                        }
+                      });
                     },
-                    child: Text(
-                      'Add',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                  ):SizedBox(
+                    height: screenWidth * 0.09,
+                    width: screenWidth * 0.22,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        side: BorderSide(
+                            color: Colors.black12, width: 0.5),
+                        foregroundColor: Colors.black,
+                        elevation: 1,
+                        overlayColor: Colors.black12,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              screenWidth * 0.015),
+                        ),
+                        // padding: EdgeInsets.zero,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isAdd = true;
+                          _itemQuantity = 1;
+                        });
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          'Add',
+                          style: TextStyle(
+                            fontSize: (screenWidth * 0.09) * 0.4,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -303,6 +405,7 @@ class _ServiceDetails extends StatelessWidget {
     );
   }
 
+
   Widget _buildFQAUI(BuildContext context){
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
@@ -389,7 +492,7 @@ class _ServiceDetails extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildReviewSlider(BuildContext context){
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;

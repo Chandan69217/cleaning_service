@@ -1,14 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'package:cleaning_service/models/cart_items.dart';
 import 'package:cleaning_service/screens/all_service_list_screen.dart';
 import 'package:cleaning_service/screens/cart_screen.dart';
 import 'package:cleaning_service/screens/search_screen.dart';
 import 'package:cleaning_service/screens/service_details_screen.dart';
 import 'package:cleaning_service/screens/service_options.dart';
+import 'package:cleaning_service/utilities/get_cart_items.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../../models/categories_service.dart';
 import '../../models/data.dart';
+import '../../shimmer_effect/category_effect/categorized_service_shimmer.dart';
+import '../../utilities/api_urls.dart';
 import '../../utilities/cust_colors.dart';
 
 
@@ -503,8 +512,9 @@ class TopMenuSection extends StatelessWidget {
   final double iconSize;
   final VoidCallback? onSearch;
   final VoidCallback? onCart;
+  final int? cartItemCount;
 
-  const TopMenuSection({this.onSearch,this.onCart,required this.fontSize, required this.iconSize});
+  const TopMenuSection({this.onSearch,this.onCart,required this.fontSize, required this.iconSize,this.cartItemCount});
 
   @override
   Widget build(BuildContext context) {
@@ -522,7 +532,7 @@ class TopMenuSection extends StatelessWidget {
     );
 
     return Container(
-      height: screenHeight * 0.37,
+      // height: screenHeight * 0.37,
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
@@ -546,7 +556,7 @@ class TopMenuSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(FontAwesomeIcons.locationArrow, size: iconSize * 0.9),
+                      FittedBox(fit: BoxFit.contain, child: Icon(FontAwesomeIcons.locationArrow, size: iconSize * 0.9)),
                       SizedBox(width: 8.0),
                       // Location details section
                       Flexible(
@@ -556,20 +566,26 @@ class TopMenuSection extends StatelessWidget {
                           children: [
                             Flexible(
                               fit: FlexFit.loose,
-                              child: Text(
-                                '${Data.user_placemarks != null ?Data.user_placemarks!.first.locality : 'N/A'}',
-                                style: titleStyle,
-                                textAlign: TextAlign.justify,
+                              child: FittedBox(
+                                fit: BoxFit.contain,
+                                child: Text(
+                                  '${Data.user_placemarks != null ?Data.user_placemarks!.first.locality : 'N/A'}',
+                                  style: titleStyle,
+                                  textAlign: TextAlign.justify,
+                                ),
                               ),
                             ),
                             Flexible(
                               fit: FlexFit.loose,
-                              child: Text(
-                                '${Data.address}',
-                                style: subtitleStyle,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                textAlign: TextAlign.justify,
+                              child: FittedBox(
+                                fit: BoxFit.contain,
+                                child: Text(
+                                  '${Data.address}',
+                                  style: subtitleStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                  textAlign: TextAlign.justify,
+                                ),
                               ),
                             ),
                           ],
@@ -584,16 +600,26 @@ class TopMenuSection extends StatelessWidget {
                   flex: 1,
                   child: GestureDetector(
                     onTap: onCart,
-                    child: Container(
-                      padding: EdgeInsets.all(5.0),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: Colors.grey, width: 1),
-                      ),
-                      child: Icon(Icons.shopping_cart, size: iconSize),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                        padding: EdgeInsets.all(5.0),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey, width: 1),
+                        ),
+                        ),
+                  Badge(
+                      label: cartItemCount!=null ? Text(cartItemCount! > 9 ? '9+' : '$cartItemCount'):null,
+                      offset: Offset(8.0,-8.0),
+                      isLabelVisible: cartItemCount != null && cartItemCount != 0,
+                      child: Icon(Icons.shopping_cart, size: iconSize)),
+                      ]
                     ),
                   ),
                 ),
+
               ],
             ),
           ),
@@ -626,22 +652,20 @@ class TopMenuSection extends StatelessWidget {
           ),
 
           // Menu Section
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(screenWidth * 0.05),
-              child: GridView.count(crossAxisCount: 2,
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                childAspectRatio: 2.7,
-                crossAxisSpacing: screenWidth*0.02,
-                mainAxisSpacing: screenWidth*0.02,
-                children: [
-                  MenuItems(label: 'Cleaning', icon: 'assets/icons/vacuum.webp',fontSize: fontSize,),
-                  MenuItems(label: 'Water Purifier', icon: 'assets/icons/water-filter.webp',fontSize: fontSize,),
-                  MenuItems(label: 'Electrician,   Plumber & Carpenter', icon: 'assets/icons/electrician-service.webp',fontSize: fontSize,),
-                  MenuItems(label: 'AC & Appliance Repair', icon: 'assets/icons/air-conditioner.webp',fontSize: fontSize,),
-                ],
-              ),
+          Padding(
+            padding: EdgeInsets.all(screenWidth * 0.05),
+            child: GridView.count(crossAxisCount: 2,
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              childAspectRatio: 2.7,
+              crossAxisSpacing: screenWidth*0.02,
+              mainAxisSpacing: screenWidth*0.02,
+              children: [
+                MenuItems(label: 'Cleaning', icon: 'assets/icons/vacuum.webp',fontSize: fontSize,),
+                MenuItems(label: 'Water Purifier', icon: 'assets/icons/water-filter.webp',fontSize: fontSize,),
+                MenuItems(label: 'Electrician,   Plumber & Carpenter', icon: 'assets/icons/electrician-service.webp',fontSize: fontSize,),
+                MenuItems(label: 'AC & Appliance Repair', icon: 'assets/icons/air-conditioner.webp',fontSize: fontSize,),
+              ],
             ),
           ),
         ],
@@ -680,8 +704,8 @@ class MenuItems extends StatelessWidget{
 
 class CategorySlideCard extends StatefulWidget {
   final VoidCallback? onPressed;
-
-  const CategorySlideCard({super.key,this.onPressed});
+  final List<Service> services;
+  const CategorySlideCard({super.key,this.onPressed,required this.services});
   @override
   _CategorySlideCardState createState() => _CategorySlideCardState();
 }
@@ -705,12 +729,14 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
   @override
   void initState() {
     super.initState();
-    _startAutoSlide();
+   if(widget.services.length > 1){
+     _startAutoSlide();
+   }
   }
 
   void _startAutoSlide() {
     Timer.periodic(Duration(seconds: 3), (timer) {
-      if (_pageController.page == imageUrls.length - 1) {
+      if (_pageController.page == widget.services.length - 1) {
         _pageController.jumpToPage(0);
       } else {
         _pageController.nextPage(
@@ -733,7 +759,7 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
     double screenWidth = MediaQuery.of(context).size.width;
     return Center(
       child: Container(
-        height: screenHeight*0.23,
+        // height: screenHeight*0.3,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(screenWidth*0.015),
           color: Colors.white,
@@ -746,96 +772,102 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
           ],
         ),
         child: Stack(
-          fit: StackFit.expand,
+            fit: StackFit.expand,
           children: [
             PageView.builder(
-              controller: _pageController,
-              itemCount: imageUrls.length,
-              onPageChanged: (page) {
-                setState(() {
-                  _currentPage = page;
-                });
-              },
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 1,
-                        color: Colors.black.withOpacity(0.1),
-                        // spreadRadius: 1,
-                      )
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10.0),
-                    child: Image.network(
-                      imageUrls[index],
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                );
-              },
-            ),
-            // Text overlay at the top left
-            Positioned(
-              top: (screenHeight*0.23)*0.1,
-              left: (screenHeight*0.23)*0.1,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Native Water Purifiers',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.055,
-                      fontWeight: FontWeight.bold,
-                      height: 1.1
-                    ),
-                  ),
-                  SizedBox(height: 2),
-                  Text(
-                    'Needs no service for 2 years',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: screenWidth * 0.038,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Button at the bottom left
-            Positioned(
-              bottom: (screenHeight*0.23)*0.13,
-              left: (screenHeight*0.23)*0.1,
-              child: SizedBox(
-                width: (screenHeight*0.23)*0.55,
-                height: (screenHeight*0.23)*0.21,
-                child: ElevatedButton(
-                  onPressed: widget.onPressed,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    elevation: 4,
-                  ),
-                  child: Text(
-                    'Book now',
-                    style: TextStyle(fontSize: (screenHeight*0.23)*0.06),
-                  ),
+            controller: _pageController,
+            itemCount: widget.services.length,
+            onPageChanged: (page) {
+              setState(() {
+                _currentPage = page;
+              });
+            },
+            itemBuilder: (context, index) {
+              final service = widget.services[index];
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 1,
+                      color: Colors.black.withOpacity(0.1),
+                      // spreadRadius: 1,
+                    )
+                  ],
                 ),
-              ),
-            ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10.0),
+                      child: Image.network(
+                        imageUrls[index],
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    // Text overlay at the top left
+                    Positioned(
+                      top: (screenHeight*0.23)*0.1,
+                      left: (screenHeight*0.23)*0.1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            service.serviceName,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: screenWidth * 0.055,
+                                fontWeight: FontWeight.bold,
+                                height: 1.1
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            service.description,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: screenWidth * 0.038,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Button at the bottom left
+                    Positioned(
+                      bottom: (screenHeight*0.23)*0.13,
+                      left: (screenHeight*0.23)*0.1,
+                      child: SizedBox(
+                        width: (screenHeight*0.23)*0.55,
+                        height: (screenHeight*0.23)*0.21,
+                        child: ElevatedButton(
+                          onPressed: widget.onPressed,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            elevation: 4,
+                          ),
+                          child: Text(
+                            'Book now',
+                            style: TextStyle(fontSize: (screenHeight*0.23)*0.06),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
             // Indicator
             Positioned(
               bottom: (screenHeight*0.23)*0.05,
               left: (screenHeight*0.23)*0.1,
               child: Row(
-                children: List.generate(imageUrls.length, (index) {
+                children: List.generate(widget.services.length, (index) {
                   return AnimatedContainer(
                     duration: Duration(milliseconds: 300),
                     margin: EdgeInsets.symmetric(horizontal: 4),
@@ -849,25 +881,22 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
                 }),
               ),
             ),
-          ],
+          ]
         ),
+
       ),
     );
   }
 }
 
-class LoggedInHomeScreen extends StatelessWidget {
-  List<String> imageUrls = [
-    'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
-    'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
-    'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
-  ];
+class LoggedInHomeScreen extends StatefulWidget {
+  @override
+  State<LoggedInHomeScreen> createState() => _LoggedInHomeScreenState();
+}
+
+class _LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
+  int _cartItemsCount = 0;
+  CartItems? _cartItems;
 
   @override
   Widget build(BuildContext context) {
@@ -882,46 +911,67 @@ class LoggedInHomeScreen extends StatelessWidget {
         child: Column(
           children: [
             TopMenuSection(fontSize: fontSize, iconSize: iconSize,
-              onCart: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> EmptyCartScreen())),
+              onCart: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> CartScreen(cartItems: _cartItems,))),
               onSearch: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> SearchScreen(),)),
+              cartItemCount: _cartItemsCount,
             ),
-            Container(
-              margin: EdgeInsets.only(top: screenWidth * 0.01),
-              padding: EdgeInsets.symmetric(horizontal: screenWidth *0.05, vertical: screenWidth*0.02),
-              decoration: BoxDecoration(color: Colors.white),
-              child: Column(
-                children: [
-                  CategorizedService(
-                    onItemClicked: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,)));
-                    },
-                    onMoreOptionClicked: (){
-                      showServicesOptions(context);
-                    },
-                    label: 'Most booked service',
-                    fontSize: fontSize,
-                    imagesUrl: imageUrls,
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  CategorySlideCard(
-                    onPressed: (){
-                      showServiceDetails(context);
-                    },
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                  CategorizedService(
-                    onItemClicked: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,)));
-                    },
-                    onMoreOptionClicked: (){
-                      showServicesOptions(context);
-                    },
-                    label: 'Quick home repairs',
-                    fontSize: fontSize,
-                    imagesUrl: imageUrls,
-                  ),
-                  SizedBox(height: screenHeight * 0.02),
-                ],
+            StatefulBuilder(
+              builder: (context,state)=>FutureBuilder(
+                future: fetchHomeScreenData(),
+                builder:(_,snapshot){
+                  if(snapshot.hasData){
+                    // Model Class
+                    final model = snapshot.data;
+                    // All Categories Data Received
+                    final categories = model!.categories;
+                    // Checking if Categories is empty
+                    if(categories.isEmpty){
+                      return Center(
+                        child: Text('Empty',style: TextStyle(fontSize: screenWidth * 0.05,fontWeight: FontWeight.w500),),
+                      );
+                    }
+                    return ListView.builder(
+                      itemCount: categories.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemBuilder: (__,index) {
+                        final category = categories[index];
+                        return Column(
+                        children: [
+                          // Text(category.categoryName,style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize)),
+                          ListView.builder(
+                            itemCount: category.subCategory.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, int index) {
+                              final subCategories = category.subCategory[index];
+                              return  Container(
+                                  margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
+                                  padding: EdgeInsets.symmetric(horizontal: screenWidth *0.05, vertical: screenWidth*0.02),
+                                  decoration: BoxDecoration(color: Colors.white),
+                                child: CategorizedService(
+                                        onItemClicked: (){
+
+                                        },
+                                        onMoreOptionClicked: (){
+                                          showServicesOptions(context);
+                                        },
+                                        label: subCategories.subCategoryName,
+                                        fontSize: fontSize,
+                                        services: subCategories.services,
+                                      ),
+                              );
+                            },
+
+                          ),
+                        ],
+                      );
+                      }
+                    );
+                  }else{
+                    return HomeScreenCategorizedShimmer();
+                  }
+                },
               ),
             )
           ],
@@ -929,55 +979,139 @@ class LoggedInHomeScreen extends StatelessWidget {
       ),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((duration){
+      _init();
+    });
+  }
+
+  void _init()async{
+    _cartItems = await getCartItems();
+    setState((){
+      if(_cartItems != null){
+        _cartItemsCount = _cartItems!.data.length;
+      }
+    });
+  }
+
+  Future<CategoriesServiceModel?> fetchHomeScreenData() async {
+    try {
+      var uri = Uri.https(Urls.base_url, Urls.categories);
+      var response = await get(uri, headers: {
+        'Content-Type': 'application/json',
+      });
+      if (response.statusCode == 200) {
+        return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+      } else {
+        print('Server error: ${response.statusCode} - ${response.reasonPhrase}');
+        return null;
+      }
+    } on SocketException catch (e) {
+      print('No internet connection: $e');
+      return null;
+    } on HttpException catch (e) {
+      print('HTTP Exception: $e');
+      return null;
+    } on FormatException catch (e) {
+      print('Bad response format: $e');
+      return null;
+    } catch (e) {
+      print('Unexpected error: $e');
+      return null;
+    }
+  }
+
 }
 
 
 class CategorizedService extends StatelessWidget {
   final double fontSize;
   final label;
-  List<String> imagesUrl;
+  final List<Service> services;
   final VoidCallback? onItemClicked;
   final VoidCallback? onMoreOptionClicked;
-  CategorizedService({this.onMoreOptionClicked,this.onItemClicked,required this.label, required this.fontSize, required this.imagesUrl});
+  List<String> imageUrls = [
+    'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
+    'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
+    'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+    'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
+  ];
+  CategorizedService({this.onMoreOptionClicked,this.onItemClicked,required this.label, required this.fontSize,required this.services});
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double gridSpacing = screenWidth * 0.03;
-
     return Container(
-      height: screenWidth*0.66,
+      height: screenWidth * 1.1,
       color: Colors.white,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize),
-              ),
-              TextButton(
-                onPressed: onMoreOptionClicked,
-                child: Text('See all', style: TextStyle(fontSize: fontSize*0.8)),
-              ),
-            ],
+          Flexible(
+            flex: 1,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize,),
+                    ),
+                  ),
+                ),
+                SizedBox(width:  screenWidth * 0.02,),
+                TextButton(
+                  onPressed: onMoreOptionClicked,
+                  child: Text('See all', style: TextStyle(fontSize: fontSize*0.8)),
+                ),
+              ],
+            ),
           ),
-          Expanded(
+          Flexible(
+            flex: 3,
+            fit: FlexFit.loose,
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
-              itemCount: imagesUrl.length,
+              itemCount: services.length,
               itemBuilder: (context, index) {
                 return CategoryCard(
-                  onTap:onItemClicked,
-                  image: imagesUrl[index],
-                  label: 'Intense bathroom cleaning',
+                  onTap:(){
+                    showServiceDetails(context,service: services[index]);
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,service: services[index],)));
+                  },
+                  image: imageUrls[index],
+                  label: services[index].serviceName,
                   rating: '4.78(1.9M)',
-                  price: '519',
+                  price: services[index].price.toString(),
                 );
+              },
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.01),
+          Flexible(
+            flex: 3,
+            fit: FlexFit.loose,
+            child: CategorySlideCard(services: services,
+              onPressed: (){
+                showServiceDetails(context);
               },
             ),
           ),
@@ -1005,6 +1139,7 @@ class CategoryCard extends StatelessWidget {
         width: screenWidth*0.35,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
@@ -1015,42 +1150,54 @@ class CategoryCard extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SizedBox(height: 8.0),
-            Expanded(
-              flex: 2,
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: screenWidth * 0.035,
-                  fontWeight: FontWeight.w600,
-                  height: 1.1,
+            // SizedBox(height: 8.0),
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.035,
+                    fontWeight: FontWeight.w600,
+                    height: 2,
+                  ),
                 ),
               ),
             ),
             // Spacer(),
-            Flexible(
-              fit: FlexFit.loose,
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
               child: Row(
                 children: [
-                  Icon(Icons.star, size: 15),
+                  Icon(Icons.star, size: screenWidth * 0.035),
                   SizedBox(width: 2),
-                  Text(
-                    rating,
-                    style: TextStyle(fontSize: screenWidth < 600 ? 12 : 14,height: 1.1),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        rating,
+                        style: TextStyle(fontSize: screenWidth * 0.035,height: 1.1),
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
             // SizedBox(height: 2),
-            Flexible(
-              fit: FlexFit.loose,
+            Padding(
+              padding: const EdgeInsets.only(left: 4.0),
               child: Row(
                 children: [
-                  Icon(Icons.currency_rupee_rounded, size: 15),
+                  FittedBox( fit: BoxFit.scaleDown,child: Icon(Icons.currency_rupee_rounded, size: screenWidth * 0.035)),
                   SizedBox(width: 2),
-                  Text(
-                    price,
-                    style: TextStyle(fontSize: screenWidth < 600 ? 12 : 14,height: 1.1),
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      price,
+                      style: TextStyle(fontSize: screenWidth * 0.035,height: 1.1),
+                    ),
                   ),
                 ],
               ),
@@ -1061,3 +1208,11 @@ class CategoryCard extends StatelessWidget {
     );
   }
 }
+
+
+
+
+
+
+
+

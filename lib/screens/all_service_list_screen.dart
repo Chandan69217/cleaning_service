@@ -1,11 +1,13 @@
 import 'package:cleaning_service/screens/service_details_screen.dart';
 import 'package:flutter/material.dart';
+import '../models/categories_service.dart';
 import '../utilities/cust_colors.dart';
 
 
 class AllServicesListScreen extends StatelessWidget {
   final bool? isShowServiceDetails;
-  const AllServicesListScreen({super.key, this.isShowServiceDetails = false});
+  final Service? service;
+  const AllServicesListScreen({super.key, this.isShowServiceDetails = false,this.service});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class AllServicesListScreen extends StatelessWidget {
 
     WidgetsBinding.instance.addPostFrameCallback((_){
       if(isShowServiceDetails!){
-        showServiceDetails(context);
+        showServiceDetails(context,service: service);
       }
     });
     return Scaffold(
@@ -186,8 +188,9 @@ class AllServicesListScreen extends StatelessWidget {
     );
   }
 
-  Widget _listGropItem({required BuildContext context,VoidCallback? onTap, VoidCallback? onViewDetailsPressed, VoidCallback? onAddButtonClicked}) {
-    onAddButtonClicked = () {};
+  Widget _listGropItem({required BuildContext context,VoidCallback? onTap, VoidCallback? onViewDetailsPressed, Function(int cartItemCount)? onAddButtonClicked}) {
+    int _itemCount = 0;
+    bool _isAdd = false;
     double screenWidth = MediaQuery.of(context).size.width;
     return Column(
       children: [
@@ -281,28 +284,38 @@ class AllServicesListScreen extends StatelessWidget {
                         bottom: -14,
                         left: 0,
                         right: 0,
-                        child: Container(
-                          height: screenWidth * 0.09,
-                          margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              side: BorderSide(color: Colors.black12, width: 0.5),
-                              foregroundColor: Color(0xFF6b45de),
-                              elevation: 0,
-                              overlayColor: Colors.black12,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(screenWidth * 0.012),
+                        child: StatefulBuilder(
+                          builder:(_,refresh)=> Container(
+                            height: screenWidth * 0.09,
+                            margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.07),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                side: BorderSide(color: Colors.black12, width: 0.5),
+                                foregroundColor: Color(0xFF6b45de),
+                                elevation: 0,
+                                overlayColor: Colors.black12,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(screenWidth * 0.012),
+                                ),
+                                padding: EdgeInsets.zero,
                               ),
-                              padding: EdgeInsets.zero,
-                            ),
-                            onPressed: onAddButtonClicked,
-                            child: Text(
-                              'Add',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.036,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xFF6b45de),
+                              onPressed: (){
+                                refresh((){
+                                  _isAdd = true;
+                                  _itemCount = 1;
+                                });
+                                if(onAddButtonClicked != null){
+                                  onAddButtonClicked.call(_itemCount);
+                                }
+                              },
+                              child: Text(
+                                'Add',
+                                style: TextStyle(
+                                  fontSize: screenWidth * 0.036,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF6b45de),
+                                ),
                               ),
                             ),
                           ),
@@ -319,6 +332,7 @@ class AllServicesListScreen extends StatelessWidget {
       ],
     );
   }
+
 }
 
 

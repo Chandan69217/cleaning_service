@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cleaning_service/utilities/cust_colors.dart';
 import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,7 +5,7 @@ import 'package:flutter/material.dart';
 
 void showOtpDialog(BuildContext context,{Future<bool> Function(String OTP)? onSubmit}) {
   double screenWidth = MediaQuery.of(context).size.width;
-  double dialogHeight = MediaQuery.of(context).size.height * 0.2;
+  double dialogHeight = MediaQuery.of(context).size.height * 0.25;
   final List<TextEditingController> otpControllers = List.generate(4, (_)=>TextEditingController());
   bool _isLoading = false;
   showDialog(
@@ -15,7 +13,13 @@ void showOtpDialog(BuildContext context,{Future<bool> Function(String OTP)? onSu
     barrierDismissible: false,
     builder: (BuildContext _) {
       return AlertDialog(
-        title: Text('Enter OTP'),
+        contentPadding: EdgeInsets.symmetric(horizontal: dialogHeight * 0.1),
+        title: FittedBox(fit:BoxFit.scaleDown,child: Text('Enter OTP',style: TextStyle(fontSize: dialogHeight * 0.12),)),
+        titlePadding: EdgeInsets.symmetric(vertical: dialogHeight * 0.1),
+        buttonPadding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(screenWidth * 0.02),
+        ),
         content: StatefulBuilder(
           builder:(__,setState){
             return SizedBox(
@@ -25,10 +29,11 @@ void showOtpDialog(BuildContext context,{Future<bool> Function(String OTP)? onSu
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   _buildOtpFields(__,otpControllers: otpControllers),
-                  SizedBox(height: dialogHeight > 200 ? dialogHeight * 0.1:dialogHeight * 0.009),
+                  // SizedBox(height: dialogHeight > 200 ? dialogHeight * 0.1:dialogHeight * 0.009),
+                  Spacer(),
                   _isLoading ? CustLoader():SizedBox(
                     width: double.infinity,
-                    height: dialogHeight * 0.27,
+                    // height: dialogHeight * 0.27,
                     child: ElevatedButton(
                       onPressed:()async{
                         setState(() {
@@ -54,15 +59,20 @@ void showOtpDialog(BuildContext context,{Future<bool> Function(String OTP)? onSu
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(
-                        'Submit',
-                        style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white, // Change if needed
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text(
+                          'Submit',
+                          style: TextStyle(
+                            fontSize: dialogHeight * 0.08,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white, // Change if needed
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  SizedBox(height: 10.0,)
                 ],
               ),
             );

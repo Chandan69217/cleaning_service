@@ -30,7 +30,6 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    double fontSizeScaling = screenWidth / 375;
 
     return Scaffold(
       backgroundColor: CustColors.white,
@@ -46,20 +45,20 @@ class _AccountScreenState extends State<AccountScreen> {
                 'Verified Customer',
                 style: TextStyle(
                   color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 22 * fontSizeScaling,
+                  fontWeight: FontWeight.w500,
+                  fontSize: screenWidth * 0.05,
                 ),
               ),
               Text(
                 mobileNo != null ? '+91 $mobileNo' : 'N/A',
-                style: TextStyle(fontSize: 14 * fontSizeScaling, color: Colors.grey),
+                style: TextStyle(fontSize: screenWidth * 0.04, color: Colors.grey),
               ),
             ],
           ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit, color: Colors.black),
+            icon: Icon(Icons.edit, color: Colors.black,size: screenWidth * 0.052,),
             onPressed: () {},
           ),
         ],
@@ -69,7 +68,7 @@ class _AccountScreenState extends State<AccountScreen> {
           children: [
             Container(
               color: Colors.white,
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+              padding: EdgeInsets.all(screenWidth * 0.05,),
               child: GridView.count(
                 crossAxisCount: 3,
                 physics: NeverScrollableScrollPhysics(),
@@ -79,9 +78,9 @@ class _AccountScreenState extends State<AccountScreen> {
                 children: [
                   _buildCard(onTap: (){
                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=>BookingsScreen()));
-                  },Icons.content_paste, 'My bookings', fontSizeScaling),
-                  _buildCard(Icons.devices, 'Native devices', fontSizeScaling),
-                  _buildCard(Icons.headset, 'Help & support', fontSizeScaling),
+                  },Icons.content_paste, 'My bookings',screenWidth),
+                  _buildCard(Icons.devices, 'Native devices',screenWidth),
+                  _buildCard(Icons.headset, 'Help & support',screenWidth),
                 ],
               ),
             ),
@@ -95,19 +94,20 @@ class _AccountScreenState extends State<AccountScreen> {
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     children: [
-                      _buildListItem(Icons.description, 'My Plans', fontSizeScaling),
-                      _buildListItem(Icons.account_balance_wallet, 'Wallet', fontSizeScaling),
-                      _buildListItem(Icons.account_balance, 'Plus membership', fontSizeScaling),
-                      _buildListItem(Icons.star, 'My rating', fontSizeScaling),
-                      _buildListItem(Icons.location_on, 'Manage addresses', fontSizeScaling),
-                      _buildListItem(Icons.credit_card, 'Manage payment methods', fontSizeScaling),
-                      _buildListItem(Icons.settings, 'Settings', fontSizeScaling),
-                      _buildListItem(Icons.info, 'About UC', fontSizeScaling),
+                      _buildListItem(Icons.description, 'My Plans',screenWidth),
+                      _buildListItem(Icons.account_balance_wallet, 'Wallet',screenWidth),
+                      _buildListItem(Icons.account_balance, 'Plus membership',screenWidth),
+                      _buildListItem(Icons.star, 'My rating',screenWidth),
+                      _buildListItem(Icons.location_on, 'Manage addresses',screenWidth),
+                      _buildListItem(Icons.credit_card, 'Manage payment methods',screenWidth),
+                      _buildListItem(Icons.settings, 'Settings',screenWidth),
+                      _buildListItem(Icons.info, 'About UC',screenWidth),
                     ],
                   ),
                   SizedBox(height: screenHeight * 0.04),
                   SizedBox(
-                    width: screenWidth * 0.8,
+                    width: double.infinity,
+                    height: screenWidth * 0.11,
                     child: ElevatedButton(
                       onPressed: () {
                         Pref.instance.clear();
@@ -117,14 +117,16 @@ class _AccountScreenState extends State<AccountScreen> {
                         backgroundColor: Colors.white,
                         foregroundColor: Color(0xFFD32F2F),
                         side: BorderSide(color: Color(0xFFD32F2F)),
-                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: EdgeInsets.zero,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),
                         ),
                       ),
-                      child: Text(
-                        'Logout',
-                        style: TextStyle(color: Color(0xFFD32F2F), fontSize: 16 * fontSizeScaling),
+                      child: FittedBox(
+                        child: Text(
+                          'Logout',
+                          style: TextStyle(color: Color(0xFFD32F2F), fontSize: (screenWidth * 0.11)*0.4),
+                        ),
                       ),
                     ),
                   ),
@@ -132,7 +134,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   SizedBox(height: screenHeight * 0.04),
                   Text(
                     'Version 7.5.91 R455',
-                    style: TextStyle(color: Colors.grey, fontSize: 12 * fontSizeScaling),
+                    style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.033),
                   ),
                   SizedBox(height: screenHeight * 0.01),
                 ],
@@ -145,11 +147,11 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
 
-  Widget _buildCard(IconData icon, String label, double fontSizeScaling,{VoidCallback? onTap}) {
+  Widget _buildCard(IconData icon, String label,double screenWidth,{VoidCallback? onTap,}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(fontSizeScaling*10),
+        padding: EdgeInsets.only(left: 8.0,top: 8.0,right: 8.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.0),
           border: Border.all(color: Colors.grey.shade300),
@@ -158,17 +160,15 @@ class _AccountScreenState extends State<AccountScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(flex: 1, child: Icon(icon, size: 20 * fontSizeScaling)),
-            SizedBox(height: 20),
+            Expanded(flex: 1, child: FittedBox(fit:BoxFit.contain,child: Icon(icon, size: 20 ))),
+            SizedBox(height: 20.0),
             Expanded(
               flex: 2,
-              child: Center(
-                child: Text(
-                  label,
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14 * fontSizeScaling,
-                  ),
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: screenWidth * 0.04,
                 ),
               ),
             ),
@@ -179,14 +179,15 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
 
-  Widget _buildListItem(IconData icon, String label, double fontSizeScaling) {
+  Widget _buildListItem(IconData icon, String label,double screenWidth) {
     return ListTile(
-      leading: Icon(icon, size: 16 * fontSizeScaling), // Scaled icon size
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(icon, size: screenWidth * 0.06 ), // Scaled icon size
       title: Text(
         label,
-        style: TextStyle(fontSize: 14 * fontSizeScaling,fontWeight: FontWeight.normal), // Scaled font size
+        style: TextStyle(fontSize: screenWidth * 0.04,fontWeight: FontWeight.normal), // Scaled font size
       ),
-      trailing: Icon(Icons.arrow_forward_ios, size: 14 * fontSizeScaling,), // Scaled icon size
+      trailing: Icon(Icons.arrow_forward_ios, size: screenWidth * 0.04), // Scaled icon size
       onTap: () {},
     );
   }

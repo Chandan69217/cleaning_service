@@ -65,13 +65,14 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
     LocationPermission permission;
 
     try {
-
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        setState(() {
-          locationMessage = "Location services are disabled.";
-          isFetchingLocation = false;
-        });
+        if (mounted) {
+          setState(() {
+            locationMessage = "Location services are disabled.";
+            isFetchingLocation = false;
+          });
+        }
         return;
       }
 
@@ -80,10 +81,12 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
         permission = await Geolocator.requestPermission();
         if (permission != LocationPermission.whileInUse &&
             permission != LocationPermission.always) {
-          setState(() {
-            locationMessage = "Location permission denied.";
-            isFetchingLocation = false;
-          });
+          if (mounted) {
+            setState(() {
+              locationMessage = "Location permission denied.";
+              isFetchingLocation = false;
+            });
+          }
           return;
         }
       }
@@ -94,27 +97,35 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
       List<Placemark> placemarks = await placemarkFromCoordinates(
           position.latitude, position.longitude);
 
-      Placemark place = placemarks.first;
+      String formattedAddress =
+      await getAddressFromCoordinates(position.latitude, position.longitude);
+      Data.initialize(
+          addr: formattedAddress, placemarks: placemarks, position: position);
 
-      String formattedAddress = await getAddressFromCoordinates(position.latitude, position.longitude);
-      Data.initialize(addr:formattedAddress,placemarks: placemarks,position: position );
-      setState(() {
-        locationMessage = formattedAddress;
-        isFetchingLocation = false;
+      if (mounted) {
+        setState(() {
+          locationMessage = formattedAddress;
+          isFetchingLocation = false;
 
-        Future.delayed(Duration(milliseconds: 800), () {
-          Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (_) => Dashboard()));
+          Future.delayed(Duration(milliseconds: 800), () {
+            if (mounted) {
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => Dashboard()));
+            }
+          });
         });
-      });
+      }
     } catch (e) {
-      setState(() {
-        locationMessage = "Failed to fetch location: $e";
-        isFetchingLocation = false;
-      });
+      if (mounted) {
+        setState(() {
+          locationMessage = "Failed to fetch location: $e";
+          isFetchingLocation = false;
+        });
+      }
       print("Error occurred: $e");
     }
   }
+
 
 
   Future<String> getAddressFromCoordinates(double latitude, double longitude) async {
