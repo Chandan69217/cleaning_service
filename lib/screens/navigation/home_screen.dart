@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:cleaning_service/models/cart_items.dart';
+import 'package:cleaning_service/models/global_keys.dart';
+import 'package:cleaning_service/models/shipping_address.dart';
 import 'package:cleaning_service/screens/all_service_list_screen.dart';
 import 'package:cleaning_service/screens/cart_screen.dart';
 import 'package:cleaning_service/screens/search_screen.dart';
 import 'package:cleaning_service/screens/service_details_screen.dart';
 import 'package:cleaning_service/screens/service_options.dart';
+import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/get_cart_items.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -890,14 +893,14 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
 }
 
 class LoggedInHomeScreen extends StatefulWidget {
+  LoggedInHomeScreen({super.key});
   @override
-  State<LoggedInHomeScreen> createState() => _LoggedInHomeScreenState();
+  State<LoggedInHomeScreen> createState() => LoggedInHomeScreenState();
 }
 
-class _LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
+class LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
   int _cartItemsCount = 0;
   CartItems? _cartItems;
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -985,6 +988,7 @@ class _LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((duration){
       _init();
+      ShippingAddressList.fetchAddresses();
     });
   }
 
@@ -1003,6 +1007,7 @@ class _LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
       var response = await get(uri, headers: {
         'Content-Type': 'application/json',
       });
+      print(response.body);
       if (response.statusCode == 200) {
         return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
       } else {
@@ -1024,6 +1029,9 @@ class _LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
     }
   }
 
+  void refresh()async{
+    _init();
+  }
 }
 
 
@@ -1044,7 +1052,7 @@ class CategorizedService extends StatelessWidget {
     'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
     'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
   ];
-  CategorizedService({this.onMoreOptionClicked,this.onItemClicked,required this.label, required this.fontSize,required this.services});
+  CategorizedService({this.onMoreOptionClicked,this.onItemClicked,required this.label, required this.fontSize,required this.services,});
 
   @override
   Widget build(BuildContext context) {
@@ -1094,7 +1102,7 @@ class CategorizedService extends StatelessWidget {
               itemBuilder: (context, index) {
                 return CategoryCard(
                   onTap:(){
-                    showServiceDetails(context,service: services[index]);
+                    showServiceDetails(context,service: services[index],);
                     // Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,service: services[index],)));
                   },
                   image: imageUrls[index],

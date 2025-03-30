@@ -29,8 +29,12 @@ class Datum {
     required this.serviceName,
     required this.image,
     required this.edate,
-  }){
-    formatDate = _formatDate(edate!);
+  }) {
+    if (edate != null) {
+      formatDate = _formatDate(edate!);
+    } else {
+      formatDate = null;
+    }
   }
 
   final num id;
@@ -43,7 +47,7 @@ class Datum {
   final DateTime? edate;
   String? formatDate;
 
-  factory Datum.fromJson(Map<String, dynamic> json){
+  factory Datum.fromJson(Map<String, dynamic> json) {
     return Datum(
       id: json["Id"] ?? 0,
       userId: json["UserId"] ?? 0,
@@ -68,8 +72,7 @@ class Datum {
   };
 
   String _formatDate(DateTime date) {
-    String formattedDate = DateFormat("dd/MM/yyyy - hh:mm a").format(date);
-    return formattedDate;
+    return DateFormat("dd/MM/yyyy - hh:mm a").format(date);
   }
-
 }
+

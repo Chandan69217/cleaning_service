@@ -3,6 +3,7 @@ import 'package:cleaning_service/utilities/add_to_cart.dart';
 import 'package:cleaning_service/widgets/counter_button.dart';
 import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:flutter/material.dart';
+import '../models/global_keys.dart';
 import '../utilities/cust_colors.dart';
 
 
@@ -31,7 +32,7 @@ class _ServiceDetails extends StatefulWidget {
   final VoidCallback? onDismiss;
   final Service? service;
 
-  _ServiceDetails({super.key, this.onDismiss,this.service});
+  _ServiceDetails({super.key, this.onDismiss,this.service,});
 
   @override
   State<_ServiceDetails> createState() => _ServiceDetailsState();
@@ -127,6 +128,7 @@ class _ServiceDetailsState extends State<_ServiceDetails> {
                           _isAdd = false;
                           _isLoading = false;
                         });
+                        Keys.homeScreenKey.currentState?.refresh();
                         Navigator.of(context).pop();
                       }else{
                         refresh((){

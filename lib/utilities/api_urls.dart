@@ -5,7 +5,10 @@ class Urls {
   static const String register = '/api/Auth/register';
   static const String categories = '/api/HomePage/api/homepage';
   static const String addToCart = '/api/Booking/addtocart';
-  static const String getCart = '/api/Booking/cart';
+   static const String getCart = '/api/Booking/cart';
   static const String removeCartItem = '/api/Booking/removecartqty';
+  static const String getShippingAddress = '/api/Shipping/shippingaddress';
+  static const String getShippingAddressById = '/api/Shipping/getshippingaddressbyid';
+  static const String addShippingAddress = '/api/Shipping/createshippingaddress';
 }
 

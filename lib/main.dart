@@ -1,4 +1,3 @@
-import 'package:cleaning_service/screens/navigation/home_screen.dart';
 import 'package:cleaning_service/screens/splash/splash_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/theme_data.dart';

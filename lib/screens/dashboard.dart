@@ -1,3 +1,4 @@
+import 'package:cleaning_service/models/global_keys.dart';
 import 'package:cleaning_service/screens/authentication/logged_out_screen.dart';
 import 'package:cleaning_service/screens/navigation/account_screen.dart';
 import 'package:cleaning_service/screens/navigation/bookings_screen.dart';
@@ -18,7 +19,7 @@ class Dashboard extends StatefulWidget{
 class _DashboardState extends State<Dashboard> {
   int _currentIndex = 0;
   late bool _isLoggedIn;
-  final List<Widget> _screens = [LoggedInHomeScreen(),BookingsScreen(),RewardsScreen(),AccountScreen()];
+  final List<Widget> _screens = [LoggedInHomeScreen(key:Keys.homeScreenKey,),BookingsScreen(),RewardsScreen(),AccountScreen()];
   final List<Widget> _skippedScreens = [SkipeedHomeScreen(),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check booking information',),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check your reward information',),SkippedAccountScreen(),];
   @override
   void initState() {
