@@ -10,5 +10,6 @@ class Urls {
   static const String getShippingAddress = '/api/Shipping/shippingaddress';
   static const String getShippingAddressById = '/api/Shipping/getshippingaddressbyid';
   static const String addShippingAddress = '/api/Shipping/createshippingaddress';
+  static const String getBookingList = '/api/Booking/bookingservicelist';
 }
 

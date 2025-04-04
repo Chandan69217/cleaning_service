@@ -1,26 +1,26 @@
 import 'package:intl/intl.dart';
 
-class CartItemsList {
-  CartItemsList({
-    required this.data,
+class BookedServiceList {
+  BookedServiceList({
+    required this.bookingsList,
   });
 
-  final List<CartItems> data;
+  final List<BookedService> bookingsList;
 
-  factory CartItemsList.fromJson(Map<String, dynamic> json){
-    return CartItemsList(
-      data: json["data"] == null ? [] : List<CartItems>.from(json["data"]!.map((x) => CartItems.fromJson(x))),
+  factory BookedServiceList.fromJson(Map<String, dynamic> json){
+    return BookedServiceList(
+      bookingsList: json["data"] == null ? [] : List<BookedService>.from(json["data"]!.map((x) => BookedService.fromJson(x))),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "data": data.map((x) => x.toJson()).toList(),
+    "data": bookingsList.map((x) => x.toJson()).toList(),
   };
 
 }
 
-class CartItems {
-  CartItems({
+class BookedService {
+  BookedService({
     required this.id,
     required this.userId,
     required this.serviceId,
@@ -29,7 +29,8 @@ class CartItems {
     required this.serviceName,
     required this.image,
     required this.edate,
-  }) {
+    required this.status
+  }){
     if (edate != null) {
       formatDate = _formatDate(edate!);
     } else {
@@ -46,9 +47,10 @@ class CartItems {
   final String image;
   final DateTime? edate;
   String? formatDate;
+  String status;
 
-  factory CartItems.fromJson(Map<String, dynamic> json) {
-    return CartItems(
+  factory BookedService.fromJson(Map<String, dynamic> json){
+    return BookedService(
       id: json["Id"] ?? 0,
       userId: json["UserId"] ?? 0,
       serviceId: json["ServiceId"] ?? 0,
@@ -57,6 +59,7 @@ class CartItems {
       serviceName: json["ServiceName"] ?? "",
       image: json["Image"] ?? "",
       edate: DateTime.tryParse(json["Edate"] ?? ""),
+      status: json['Sts']??'N/A'
     );
   }
 
@@ -69,10 +72,10 @@ class CartItems {
     "ServiceName": serviceName,
     "Image": image,
     "Edate": edate?.toIso8601String(),
+    "Sts" : status
   };
 
   String _formatDate(DateTime date) {
     return DateFormat("dd/MM/yyyy - hh:mm a").format(date);
   }
 }
-

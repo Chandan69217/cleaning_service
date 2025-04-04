@@ -1,9 +1,16 @@
 class CategoriesServiceModel {
   CategoriesServiceModel({
     required this.categories,
-  });
+  }) {
+    _categories = categories;
+  }
+
+  static List<Category> _categories = [];
 
   final List<Category> categories;
+
+  static List<Category> get globalCategories => _categories;
+
   factory CategoriesServiceModel.fromJson(Map<String, dynamic> json){
     return CategoriesServiceModel(
       categories: json["Categories"] == null ? [] : List<Category>.from(json["Categories"]!.map((x) => Category.fromJson(x))),

@@ -26,7 +26,7 @@ import 'package:http/http.dart';
 //   }
 //   return null;
 // }
-Future<CartItems?> getCartItems() async {
+Future<CartItemsList?> getCartItems() async {
   try {
     final token = Pref.instance.getString(Consts.token) ?? '';
     print("Token: $token");
@@ -48,7 +48,7 @@ Future<CartItems?> getCartItems() async {
       final data = jsonDecode(response.body);
       final status = data['status'] as String;
       if (status == 'success') {
-        return CartItems.fromJson(data);
+        return CartItemsList.fromJson(data);
       } else {
         print("API returned failure: $status");
       }

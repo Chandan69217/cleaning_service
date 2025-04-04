@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class CounterButton extends StatefulWidget {
   final int initialValue;
   final ValueChanged<int>? onChanged;
+  final Color? borderColor;
 
-  const CounterButton({Key? key, this.initialValue = 0, this.onChanged}) : super(key: key);
+  const CounterButton({Key? key, this.initialValue = 0, this.onChanged,this.borderColor}) : super(key: key);
 
   @override
   _CounterButtonState createState() => _CounterButtonState();
@@ -44,7 +45,7 @@ class _CounterButtonState extends State<CounterButton> {
       width: screenWidth * 0.22,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(screenWidth * 0.015),
-        border: Border.all(color: Colors.indigoAccent),
+        border: Border.all(color: widget.borderColor??Colors.indigoAccent),
         color: Colors.white,
         boxShadow: [
           BoxShadow(

@@ -1,15 +1,13 @@
 import 'dart:convert';
 
 import 'package:cleaning_service/models/cart_items.dart';
-import 'package:cleaning_service/screens/all_service_list_screen.dart';
 import 'package:cleaning_service/utilities/api_urls.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
 
-import '../PaymentAndAddressScreen/payment_and_address_screen.dart';
-import '../testing.dart';
+import '../payment_and_address_screen/payment_and_address_screen.dart';
+
 
 class _EmptyCartScreen extends StatelessWidget {
   @override
@@ -98,7 +96,7 @@ class _EmptyCartScreen extends StatelessWidget {
 
 
 class CartScreen extends StatefulWidget {
-  final CartItems? cartItems;
+  final CartItemsList? cartItems;
   CartScreen({this.cartItems});
 
   @override
@@ -253,9 +251,8 @@ class _CartScreenState extends State<CartScreen> {
                       MaterialPageRoute(builder: (context) =>  PaymentAndAddressScreen()),
                     );
                   },
-
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.indigoAccent,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -297,7 +294,7 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-  double _calculateTotalAmount(CartItems cartItems) {
+  double _calculateTotalAmount(CartItemsList cartItems) {
     double totalAmount = 0;
     for (var item in cartItems.data) {
       totalAmount += item.price.toDouble();

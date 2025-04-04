@@ -1,3 +1,4 @@
+import 'package:cleaning_service/models/categories_service.dart';
 import 'package:cleaning_service/screens/all_service_list_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -55,41 +56,24 @@ class _ServiceOptionScreen extends StatelessWidget {
             width: screenWidth,
             child: Padding(
               padding: EdgeInsets.all(screenWidth * 0.05),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  GridView.count(
-                    shrinkWrap: true,
-                    childAspectRatio: 0.7,
-                    physics: NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: screenWidth * 0.05,
-                    mainAxisSpacing: screenWidth * 0.05,
-                    crossAxisCount: 4,
-                    children: [
-                      _buildService( onTap: (){
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AllServicesListScreen()));
-                      },context, 'Electrician',
-                          'assets/icons/electrician-service.webp'),
-                      _buildService( onTap: (){
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AllServicesListScreen()));
-                      },context, 'Plumber',
-                          'assets/pictures/plumber.webp'),
-                      _buildService( onTap: (){
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AllServicesListScreen()));
-                      },context, 'Carpenter',
-                          'assets/pictures/carpenter.webp'),
-                      _buildService( onTap: (){
-                        Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AllServicesListScreen()));
-                      },context, 'Furniture Assembly',
-                          'assets/pictures/furniture.webp'),
-                    ],
-                  ),
-                  // SizedBox(height: screenWidth * 0.08,)
-                ],
+              child: GridView.builder(
+                shrinkWrap: true,
+                itemCount: CategoriesServiceModel.globalCategories.length,
+                physics: NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  childAspectRatio: 0.7,
+                  crossAxisSpacing: screenWidth * 0.05,
+                  mainAxisSpacing: screenWidth * 0.05,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  var categories = CategoriesServiceModel.globalCategories;
+                  return _buildService(onTap: () {
+                    Navigator.pop(context);
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AllServicesListScreen(category: categories[index],)));
+                  }, context,categories[index].categoryName,
+                      'assets/icons/electrician-service.webp');
+                },
               ),
             ),
           ),
@@ -98,7 +82,8 @@ class _ServiceOptionScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildService(BuildContext context, String title, String imageUrl,{VoidCallback? onTap}) {
+  Widget _buildService(BuildContext context, String title, String imageUrl,
+      {VoidCallback? onTap}) {
     double screenWidth = MediaQuery.of(context).size.width;
 
     return GestureDetector(

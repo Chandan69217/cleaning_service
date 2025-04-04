@@ -37,7 +37,10 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
       backgroundColor:Color(0xFFF9F9F9),
       body: SafeArea(
-        child: _isLoggedIn ? _screens[_currentIndex] : _skippedScreens[_currentIndex],
+        child: IndexedStack(
+          index: _currentIndex,
+          children: _isLoggedIn ? _screens : _skippedScreens,
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: CustColors.primary,

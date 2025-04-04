@@ -27,6 +27,42 @@ class HomeScreenCategorizedShimmer extends StatelessWidget {
       decoration: BoxDecoration(color: Colors.white),
       child: Column(
         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CustomShimmerContainer(
+                width: screenWidth * 0.6,
+                height: screenWidth * 0.05,
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              CustomShimmerContainer(
+                borderRadius: BorderRadius.circular(100.0),
+                width: screenWidth * 0.1,
+                height: screenWidth * 0.1,
+              )
+            ],
+          ),
+          SizedBox(height: screenWidth * 0.04,),
+          CustomShimmerContainer(
+            height:screenWidth * 0.11,
+            width: screenWidth,
+          ),
+          SizedBox(height: screenWidth * 0.04,),
+          GridView.count(
+            crossAxisCount: 2,
+            childAspectRatio: 2.7,
+            crossAxisSpacing: screenWidth * 0.02,
+            mainAxisSpacing: screenWidth * 0.02,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            children: [
+              CustomShimmerContainer(),
+              CustomShimmerContainer(),
+              CustomShimmerContainer(),
+              CustomShimmerContainer(),
+            ],
+          ),
+          SizedBox(height: screenWidth * 0.06,),
           _CategorizedServiceShimmer(),
           _CategorySlideCard(),
           SizedBox(height: screenHeight * 0.02),

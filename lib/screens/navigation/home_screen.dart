@@ -11,6 +11,7 @@ import 'package:cleaning_service/screens/service_details_screen.dart';
 import 'package:cleaning_service/screens/service_options.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/get_cart_items.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -23,7 +24,6 @@ import '../../shimmer_effect/category_effect/categorized_service_shimmer.dart';
 import '../../utilities/api_urls.dart';
 import '../../utilities/cust_colors.dart';
 
-
 class SkipeedHomeScreen extends StatefulWidget {
   @override
   State<SkipeedHomeScreen> createState() => _SkipeedHomeScreenState();
@@ -32,7 +32,6 @@ class SkipeedHomeScreen extends StatefulWidget {
 class _SkipeedHomeScreenState extends State<SkipeedHomeScreen> {
   @override
   Widget build(BuildContext context) {
-
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
@@ -44,7 +43,10 @@ class _SkipeedHomeScreenState extends State<SkipeedHomeScreen> {
         child: Column(
           children: [
             LocationSection(fontSize: fontSize, iconSize: iconSize),
-            UCSection(fontSize: fontSize,iconSize: iconSize,),
+            UCSection(
+              fontSize: fontSize,
+              iconSize: iconSize,
+            ),
             ReviewsSection(fontSize: fontSize),
             BottomSection(fontSize: fontSize),
           ],
@@ -131,10 +133,11 @@ class LocationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle titleStyle = Theme.of(context).textTheme.bodyLarge!.copyWith(
-      fontSize: fontSize * 1.01,
-      fontWeight: FontWeight.bold,
-    );
+    final TextStyle titleStyle =
+        Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: fontSize * 1.01,
+              fontWeight: FontWeight.bold,
+            );
     final TextStyle subtitleStyle = TextStyle(
       fontSize: fontSize * 0.7,
       color: Color(0xFF757575),
@@ -208,7 +211,6 @@ class LocationSection extends StatelessWidget {
   }
 }
 
-
 class UCSection extends StatelessWidget {
   final double fontSize;
   final double iconSize;
@@ -217,7 +219,7 @@ class UCSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 8.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
       decoration: BoxDecoration(
         color: Colors.white,
       ),
@@ -227,9 +229,9 @@ class UCSection extends StatelessWidget {
           Text(
             'UC got you covered',
             style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-              fontSize: fontSize * 1.5,
-              fontWeight: FontWeight.bold,
-            ),
+                  fontSize: fontSize * 1.5,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           SizedBox(height: 2.0),
           Column(
@@ -237,25 +239,25 @@ class UCSection extends StatelessWidget {
               UCItem(
                 icon: Icons.shield,
                 text: '2-year unconditional warranty',
-                fontSize: fontSize*0.85,
+                fontSize: fontSize * 0.85,
               ),
               SizedBox(height: 2),
               UCItem(
                 icon: Icons.sync,
                 text: '10-day replacement',
-                fontSize: fontSize*0.85,
+                fontSize: fontSize * 0.85,
               ),
               SizedBox(height: 2),
               UCItem(
                 icon: Icons.car_repair_outlined,
                 text: 'Free 2-day delivery',
-                fontSize: fontSize*0.85,
+                fontSize: fontSize * 0.85,
               ),
               SizedBox(height: 2),
               UCItem(
                 icon: Icons.credit_card,
                 text: 'No cost EMI available',
-                fontSize: fontSize*0.85,
+                fontSize: fontSize * 0.85,
               ),
             ],
           ),
@@ -284,7 +286,10 @@ class UCItem extends StatelessWidget {
         SizedBox(width: 8.0),
         Text(
           text,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: fontSize),
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium!
+              .copyWith(fontSize: fontSize),
         ),
       ],
     );
@@ -293,7 +298,8 @@ class UCItem extends StatelessWidget {
 
 class ReviewsSection extends StatelessWidget {
   final double fontSize;
-  PageController controller = PageController(viewportFraction: 0.9, keepPage: true);
+  PageController controller =
+      PageController(viewportFraction: 0.9, keepPage: true);
 
   ReviewsSection({required this.fontSize});
 
@@ -316,7 +322,8 @@ class ReviewsSection extends StatelessWidget {
           ),
           Text(
             'Customers love us! See for yourself.',
-            style: TextStyle(fontSize: fontSize * 0.8, color: Color(0xFF757575)),
+            style:
+                TextStyle(fontSize: fontSize * 0.8, color: Color(0xFF757575)),
           ),
           SizedBox(
             height: 180.0,
@@ -326,9 +333,11 @@ class ReviewsSection extends StatelessWidget {
               itemCount: 4,
               itemBuilder: (BuildContext context, int index) {
                 return Padding(
-                  padding: const EdgeInsets.only(right: 8.0, top: 8.0, left: 8.0),
+                  padding:
+                      const EdgeInsets.only(right: 8.0, top: 8.0, left: 8.0),
                   child: ReviewCard(
-                    text: '“No more holding the water bottle till it fills up. The pre-sets are great!”',
+                    text:
+                        '“No more holding the water bottle till it fills up. The pre-sets are great!”',
                     author: 'Shreya Virmani',
                     date: 'Dec 22 · Mumbai',
                     rating: 5,
@@ -394,7 +403,11 @@ class ReviewCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: Text(text, style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize * 0.7, fontWeight: FontWeight.bold))),
+              Expanded(
+                  child: Text(text,
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: fontSize * 0.7,
+                          fontWeight: FontWeight.bold))),
               SizedBox(width: 10.0),
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 5.0),
@@ -406,11 +419,13 @@ class ReviewCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.star, color: CustColors.white, size: fontSize * 0.7),
+                    Icon(Icons.star,
+                        color: CustColors.white, size: fontSize * 0.7),
                     SizedBox(width: 1),
                     Text(
                       '$rating',
-                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: CustColors.white, fontWeight: FontWeight.bold),
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          color: CustColors.white, fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -427,13 +442,15 @@ class ReviewCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       '$author',
-                      style: TextStyle(fontSize: fontSize * 0.5, color: Color(0xFF757575)),
+                      style: TextStyle(
+                          fontSize: fontSize * 0.5, color: Color(0xFF757575)),
                     ),
                   ),
                   Expanded(
                     child: Text(
                       '$date',
-                      style: TextStyle(fontSize: fontSize * 0.5, color: Color(0xFF757575)),
+                      style: TextStyle(
+                          fontSize: fontSize * 0.5, color: Color(0xFF757575)),
                     ),
                   ),
                 ],
@@ -455,25 +472,31 @@ class BottomSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: EdgeInsets.symmetric(horizontal: 20.0,vertical: 10.0),
+      padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       margin: EdgeInsets.only(top: 6.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Made for India',
-            style: TextStyle(fontSize: fontSize * 1.5, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: fontSize * 1.5, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 2.0),
           Text(
             'Native is a line of user-friendly innovations here to level up industry standards. Each product has been extensively researched, rigorously tested, & built from scratch alongside industry experts.',
-            style: TextStyle(fontSize: fontSize * 0.8, color: Color(0xFF757575)),
+            style:
+                TextStyle(fontSize: fontSize * 0.8, color: Color(0xFF757575)),
           ),
           SizedBox(height: 20.0),
           Row(
             children: [
-              NetworkImage(imageUrl: 'https://storage.googleapis.com/a1aa/image/0rl47qjrXyzf5EC1o4pn3nP7tHWELUYQX1zM4uiaRdA.jpg'),
-              NetworkImage(imageUrl: 'https://storage.googleapis.com/a1aa/image/uMbKUse4aYWLEmFpBvfzBwbxclhuuXBrBT0x4T9Q1BE.jpg'),
+              NetworkImage(
+                  imageUrl:
+                      'https://storage.googleapis.com/a1aa/image/0rl47qjrXyzf5EC1o4pn3nP7tHWELUYQX1zM4uiaRdA.jpg'),
+              NetworkImage(
+                  imageUrl:
+                      'https://storage.googleapis.com/a1aa/image/uMbKUse4aYWLEmFpBvfzBwbxclhuuXBrBT0x4T9Q1BE.jpg'),
             ],
           ),
         ],
@@ -493,44 +516,45 @@ class NetworkImage extends StatelessWidget {
       padding: EdgeInsets.only(right: 10.0),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
-        child: Image.network(imageUrl, width: 150.0, height: 150.0, fit: BoxFit.cover),
+        child: Image.network(imageUrl,
+            width: 150.0, height: 150.0, fit: BoxFit.cover),
       ),
     );
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-class TopMenuSection extends StatelessWidget {
+class TopMenuSection extends StatefulWidget {
   final double fontSize;
   final double iconSize;
   final VoidCallback? onSearch;
   final VoidCallback? onCart;
   final int? cartItemCount;
 
-  const TopMenuSection({this.onSearch,this.onCart,required this.fontSize, required this.iconSize,this.cartItemCount});
+  const TopMenuSection(
+      {this.onSearch,
+      this.onCart,
+      required this.fontSize,
+      required this.iconSize,
+      this.cartItemCount});
 
+  @override
+  State<TopMenuSection> createState() => _TopMenuSectionState();
+}
+
+class _TopMenuSectionState extends State<TopMenuSection> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
 
-    final TextStyle titleStyle = Theme.of(context).textTheme.bodyLarge!.copyWith(
-      fontSize: fontSize * 1.01,
-      fontWeight: FontWeight.w700,
-    );
+    final TextStyle titleStyle =
+        Theme.of(context).textTheme.bodyLarge!.copyWith(
+              fontSize: widget.fontSize * 1.01,
+              fontWeight: FontWeight.w700,
+            );
 
     final TextStyle subtitleStyle = TextStyle(
-      fontSize: fontSize * 0.7,
+      fontSize: widget.fontSize * 0.7,
       color: Color(0xFF757575),
     );
 
@@ -538,14 +562,15 @@ class TopMenuSection extends StatelessWidget {
       // height: screenHeight * 0.37,
       decoration: BoxDecoration(
         color: Colors.white,
-        border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
+        // border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
       ),
       child: Column(
         children: [
           // location sections
           Container(
             height: screenHeight * 0.1,
-            padding: EdgeInsets.symmetric(horizontal: screenWidth *0.05, vertical: screenWidth * 0.04),
+            padding: EdgeInsets.symmetric(
+                horizontal: screenWidth * 0.05, vertical: screenWidth * 0.04),
             decoration: BoxDecoration(
               color: Colors.white,
             ),
@@ -559,7 +584,10 @@ class TopMenuSection extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      FittedBox(fit: BoxFit.contain, child: Icon(FontAwesomeIcons.locationArrow, size: iconSize * 0.9)),
+                      FittedBox(
+                          fit: BoxFit.contain,
+                          child: Icon(FontAwesomeIcons.locationArrow,
+                              size: widget.iconSize * 0.9)),
                       SizedBox(width: 8.0),
                       // Location details section
                       Flexible(
@@ -572,7 +600,7 @@ class TopMenuSection extends StatelessWidget {
                               child: FittedBox(
                                 fit: BoxFit.contain,
                                 child: Text(
-                                  '${Data.user_placemarks != null ?Data.user_placemarks!.first.locality : 'N/A'}',
+                                  '${Data.user_placemarks != null ? Data.user_placemarks!.first.locality : 'N/A'}',
                                   style: titleStyle,
                                   textAlign: TextAlign.justify,
                                 ),
@@ -602,74 +630,74 @@ class TopMenuSection extends StatelessWidget {
                 Expanded(
                   flex: 1,
                   child: GestureDetector(
-                    onTap: onCart,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
+                    onTap: widget.onCart,
+                    child: Stack(alignment: Alignment.center, children: [
+                      Container(
                         padding: EdgeInsets.all(5.0),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(color: Colors.grey, width: 1),
                         ),
-                        ),
-                  Badge(
-                      label: cartItemCount!=null ? Text(cartItemCount! > 9 ? '9+' : '$cartItemCount'):null,
-                      offset: Offset(8.0,-8.0),
-                      isLabelVisible: cartItemCount != null && cartItemCount != 0,
-                      child: Icon(Icons.shopping_cart, size: iconSize)),
-                      ]
-                    ),
+                      ),
+                      Badge(
+                          label: widget.cartItemCount != null
+                              ? Text(widget.cartItemCount! > 9
+                                  ? '9+'
+                                  : '${widget.cartItemCount}')
+                              : null,
+                          offset: Offset(8.0, -8.0),
+                          isLabelVisible: widget.cartItemCount != null &&
+                              widget.cartItemCount != 0,
+                          child:
+                              Icon(Icons.shopping_cart, size: widget.iconSize)),
+                    ]),
                   ),
                 ),
-
               ],
             ),
           ),
 
           // Search Bar
           GestureDetector(
-            onTap: onSearch,
+            onTap: widget.onSearch,
             child: Container(
-              margin: EdgeInsets.symmetric(horizontal: screenWidth*0.05),
+              margin: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
               padding: EdgeInsets.symmetric(horizontal: 10.0),
               height: screenHeight * 0.05,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(screenWidth*0.015 ),
-                boxShadow: [BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 3,
-                  spreadRadius: 1
-                  // spreadRadius: 1,
-                )],
+                borderRadius: BorderRadius.circular(screenWidth * 0.015),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 3,
+                      spreadRadius: 1
+                      // spreadRadius: 1,
+                      )
+                ],
               ),
               child: Row(
                 children: [
-                  Icon(Icons.search,color: Colors.black.withOpacity(0.4),),
-                  SizedBox(width: 8.0,),
-                  Text('Search for service',style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black.withOpacity(0.4)),),
+                  Icon(
+                    Icons.search,
+                    color: Colors.black.withOpacity(0.4),
+                  ),
+                  SizedBox(
+                    width: 8.0,
+                  ),
+                  Text(
+                    'Search for service',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.black.withOpacity(0.4)),
+                  ),
                 ],
               ),
             ),
           ),
-
-          // Menu Section
-          Padding(
-            padding: EdgeInsets.all(screenWidth * 0.05),
-            child: GridView.count(crossAxisCount: 2,
-              physics: NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              childAspectRatio: 2.7,
-              crossAxisSpacing: screenWidth*0.02,
-              mainAxisSpacing: screenWidth*0.02,
-              children: [
-                MenuItems(label: 'Cleaning', icon: 'assets/icons/vacuum.webp',fontSize: fontSize,),
-                MenuItems(label: 'Water Purifier', icon: 'assets/icons/water-filter.webp',fontSize: fontSize,),
-                MenuItems(label: 'Electrician,   Plumber & Carpenter', icon: 'assets/icons/electrician-service.webp',fontSize: fontSize,),
-                MenuItems(label: 'AC & Appliance Repair', icon: 'assets/icons/air-conditioner.webp',fontSize: fontSize,),
-              ],
-            ),
+          SizedBox(
+            height: 8.0,
           ),
         ],
       ),
@@ -677,38 +705,57 @@ class TopMenuSection extends StatelessWidget {
   }
 }
 
-
-class MenuItems extends StatelessWidget{
+class MenuItems extends StatelessWidget {
   final String label;
   final String icon;
   final double fontSize;
-  const MenuItems({super.key, required this.label,required this.icon,this.fontSize = 12});
+  final VoidCallback? onTap;
+  const MenuItems(
+      {super.key,
+      required this.label,
+      required this.icon,
+      this.fontSize = 12,
+      this.onTap});
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    return Container(
-      padding: EdgeInsets.all(5*(fontSize*0.1)),
-      decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(screenWidth*0.025)
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(child: Text(label,style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: fontSize*0.7,height: 1.1),)),
-          SizedBox(width:fontSize,),
-          Image.asset(icon,fit: BoxFit.cover,width: 10*(fontSize*0.2),height: 10*(fontSize*0.2),),
-        ],
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.all(5 * (fontSize * 0.1)),
+        decoration: BoxDecoration(
+            color: Colors.grey.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(screenWidth * 0.025)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+                child: Text(
+              label,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium!
+                  .copyWith(fontSize: fontSize * 0.7, height: 1.1),
+            )),
+            SizedBox(
+              width: fontSize,
+            ),
+            Image.asset(
+              icon,
+              fit: BoxFit.cover,
+              width: 10 * (fontSize * 0.2),
+              height: 10 * (fontSize * 0.2),
+            ),
+          ],
+        ),
       ),
     );
   }
-
 }
 
 class CategorySlideCard extends StatefulWidget {
-  final VoidCallback? onPressed;
   final List<Service> services;
-  const CategorySlideCard({super.key,this.onPressed,required this.services});
+  const CategorySlideCard({super.key, required this.services});
   @override
   _CategorySlideCardState createState() => _CategorySlideCardState();
 }
@@ -732,9 +779,9 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
   @override
   void initState() {
     super.initState();
-   if(widget.services.length > 1){
-     _startAutoSlide();
-   }
+    if (widget.services.length > 1) {
+      _startAutoSlide();
+    }
   }
 
   void _startAutoSlide() {
@@ -764,7 +811,7 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
       child: Container(
         // height: screenHeight*0.3,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(screenWidth*0.015),
+          borderRadius: BorderRadius.circular(screenWidth * 0.015),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -774,10 +821,8 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
             ),
           ],
         ),
-        child: Stack(
-            fit: StackFit.expand,
-          children: [
-            PageView.builder(
+        child: Stack(fit: StackFit.expand, children: [
+          PageView.builder(
             controller: _pageController,
             itemCount: widget.services.length,
             onPageChanged: (page) {
@@ -810,8 +855,8 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
                     ),
                     // Text overlay at the top left
                     Positioned(
-                      top: (screenHeight*0.23)*0.1,
-                      left: (screenHeight*0.23)*0.1,
+                      top: (screenHeight * 0.23) * 0.1,
+                      left: (screenHeight * 0.23) * 0.1,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -821,8 +866,7 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
                                 color: Colors.white,
                                 fontSize: screenWidth * 0.055,
                                 fontWeight: FontWeight.bold,
-                                height: 1.1
-                            ),
+                                height: 1.1),
                           ),
                           SizedBox(height: 2),
                           Text(
@@ -837,17 +881,20 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
                     ),
                     // Button at the bottom left
                     Positioned(
-                      bottom: (screenHeight*0.23)*0.13,
-                      left: (screenHeight*0.23)*0.1,
+                      bottom: (screenHeight * 0.23) * 0.13,
+                      left: (screenHeight * 0.23) * 0.1,
                       child: SizedBox(
-                        width: (screenHeight*0.23)*0.55,
-                        height: (screenHeight*0.23)*0.21,
+                        width: (screenHeight * 0.23) * 0.55,
+                        height: (screenHeight * 0.23) * 0.21,
                         child: ElevatedButton(
-                          onPressed: widget.onPressed,
+                          onPressed: (){
+                            showServiceDetails(context,service: service);
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: Colors.black,
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 10),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(5),
                             ),
@@ -855,7 +902,8 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
                           ),
                           child: Text(
                             'Book now',
-                            style: TextStyle(fontSize: (screenHeight*0.23)*0.06),
+                            style: TextStyle(
+                                fontSize: (screenHeight * 0.23) * 0.06),
                           ),
                         ),
                       ),
@@ -865,28 +913,28 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
               );
             },
           ),
-            // Indicator
-            Positioned(
-              bottom: (screenHeight*0.23)*0.05,
-              left: (screenHeight*0.23)*0.1,
-              child: Row(
-                children: List.generate(widget.services.length, (index) {
-                  return AnimatedContainer(
-                    duration: Duration(milliseconds: 300),
-                    margin: EdgeInsets.symmetric(horizontal: 4),
-                    height: (screenHeight*0.23)*0.041,
-                    width: _currentPage == index ? (screenHeight*0.23)*0.11 : (screenHeight*0.23)*0.041,
-                    decoration: BoxDecoration(
-                      color: _currentPage == index ? Colors.white : Colors.grey,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  );
-                }),
-              ),
+          // Indicator
+          Positioned(
+            bottom: (screenHeight * 0.23) * 0.05,
+            left: (screenHeight * 0.23) * 0.1,
+            child: Row(
+              children: List.generate(widget.services.length, (index) {
+                return AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  margin: EdgeInsets.symmetric(horizontal: 4),
+                  height: (screenHeight * 0.23) * 0.041,
+                  width: _currentPage == index
+                      ? (screenHeight * 0.23) * 0.11
+                      : (screenHeight * 0.23) * 0.041,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index ? Colors.white : Colors.grey,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                );
+              }),
             ),
-          ]
-        ),
-
+          ),
+        ]),
       ),
     );
   }
@@ -898,9 +946,14 @@ class LoggedInHomeScreen extends StatefulWidget {
   State<LoggedInHomeScreen> createState() => LoggedInHomeScreenState();
 }
 
-class LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
+class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
   int _cartItemsCount = 0;
-  CartItems? _cartItems;
+  CartItemsList? _cartItems;
+  final PageController _pageController = PageController();
+  static final int itemsPerPage = 4; // Number of items per page
+
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -910,75 +963,218 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
 
     return Scaffold(
       backgroundColor: CustColors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TopMenuSection(fontSize: fontSize, iconSize: iconSize,
-              onCart: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> CartScreen(cartItems: _cartItems,))),
-              onSearch: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (context)=> SearchScreen(),)),
-              cartItemCount: _cartItemsCount,
-            ),
-            StatefulBuilder(
-              builder: (context,state)=>FutureBuilder(
-                future: fetchHomeScreenData(),
-                builder:(_,snapshot){
-                  if(snapshot.hasData){
-                    // Model Class
-                    final model = snapshot.data;
-                    // All Categories Data Received
-                    final categories = model!.categories;
-                    // Checking if Categories is empty
-                    if(categories.isEmpty){
-                      return Center(
-                        child: Text('Empty',style: TextStyle(fontSize: screenWidth * 0.05,fontWeight: FontWeight.w500),),
-                      );
-                    }
-                    return ListView.builder(
-                      itemCount: categories.length,
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemBuilder: (__,index) {
-                        final category = categories[index];
-                        return Column(
-                        children: [
-                          // Text(category.categoryName,style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize)),
-                          ListView.builder(
-                            itemCount: category.subCategory.length,
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              final subCategories = category.subCategory[index];
-                              return  Container(
-                                  margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
-                                  padding: EdgeInsets.symmetric(horizontal: screenWidth *0.05, vertical: screenWidth*0.02),
-                                  decoration: BoxDecoration(color: Colors.white),
-                                child: CategorizedService(
-                                        onItemClicked: (){
-
-                                        },
-                                        onMoreOptionClicked: (){
-                                          showServicesOptions(context);
-                                        },
-                                        label: subCategories.subCategoryName,
-                                        fontSize: fontSize,
-                                        services: subCategories.services,
-                                      ),
+      body: FutureBuilder(
+        future: _fetchHomeScreenData(),
+        builder: (_, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return SingleChildScrollView(child: HomeScreenCategorizedShimmer());
+          }
+      
+          if (snapshot.hasError) {
+            return _buildErrorWidget(snapshot.error.toString());
+          }
+      
+          // Model Class
+          final model = snapshot.data;
+          // All Categories Data Received
+          final categories = model!.categories;
+          // Checking if Categories is empty
+          int pageCount = (categories.length / itemsPerPage).ceil();
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                TopMenuSection(
+                  fontSize: fontSize,
+                  iconSize: iconSize,
+                  onCart: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CartScreen(
+                        cartItems: _cartItems,
+                      ))),
+                  onSearch: () =>
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => SearchScreen(),
+                      )),
+                  cartItemCount: _cartItemsCount,
+                ),
+                // Menu Section
+                if (categories.isNotEmpty)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
+                    ),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: screenWidth * 0.45,
+                          child: PageView.builder(
+                            controller: _pageController,
+                            itemCount: pageCount,
+                            itemBuilder: (context, pageIndex) {
+                              int startIndex = pageIndex * itemsPerPage;
+                              int endIndex = (startIndex + itemsPerPage) >
+                                  categories.length
+                                  ? categories.length
+                                  : (startIndex + itemsPerPage);
+                  
+                              List<Category> pageItems =
+                              categories.sublist(startIndex, endIndex);
+                              return Padding(
+                                padding: EdgeInsets.all(screenWidth * 0.05),
+                                child: GridView.builder(
+                                  itemCount: pageItems.length,
+                                  gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 2.7,
+                                    crossAxisSpacing: screenWidth * 0.02,
+                                    mainAxisSpacing: screenWidth * 0.02,
+                                  ),
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemBuilder: (_, index) => MenuItems(
+                                    label: pageItems[index].categoryName,
+                                    icon: 'assets/icons/vacuum.webp',
+                                    fontSize: fontSize,
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AllServicesListScreen(
+                                                    category:
+                                                    pageItems[index],
+                                                  )));
+                                    },
+                                  ),
+                                ),
                               );
                             },
-
                           ),
+                        ),
+                        // SizedBox(height: 10),
+                        SmoothPageIndicator(
+                          controller: _pageController,
+                          count: pageCount,
+                          effect: ExpandingDotsEffect(
+                            dotHeight: 4.0,
+                            dotWidth: 4.0,
+                            activeDotColor: Colors.blue,
+                            dotColor: Colors.grey,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    ),
+                  ),
+                categories.isEmpty
+                    ? Center(
+                  child: Text(
+                    'Empty',
+                    style: TextStyle(
+                        fontSize: screenWidth * 0.05,
+                        fontWeight: FontWeight.w500),
+                  ),
+                )
+                    : ListView.builder(
+                    itemCount: categories.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (__, index) {
+                      final category = categories[index];
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            color: Colors.white,
+                            margin:
+                            EdgeInsets.only(top: screenWidth * 0.01),
+                            padding: EdgeInsets.only(
+                                top: screenWidth * 0.03,
+                                left: screenWidth * 0.05,
+                                bottom: screenWidth * 0.03,
+                                right: screenWidth * 0.01),
+                            child: Row(
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  fit: FlexFit.loose,
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: Text(
+                                      category.categoryName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge!
+                                          .copyWith(
+                                        fontSize: fontSize,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: screenWidth * 0.02,
+                                ),
+                                SizedBox(
+                                  height: 25.0,
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AllServicesListScreen(
+                                                    category: category,
+                                                  )));
+                                    },
+                                    child: Text('See all',
+                                        style: TextStyle(
+                                            fontSize: fontSize * 0.8)),
+                                    style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (category.subCategory.isNotEmpty)
+                            ListView.builder(
+                              itemCount: category.subCategory.length,
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder:
+                                  (BuildContext context, int index) {
+                                final subCategories =
+                                category.subCategory[index];
+                                return Container(
+                                  // margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
+                                  padding: EdgeInsets.only(
+                                      left: screenWidth * 0.05,
+                                      bottom: screenWidth * 0.05,
+                                      right: screenWidth * 0.05),
+                                  decoration:
+                                  BoxDecoration(color: Colors.white),
+                                  child: CategorizedService(
+                                    onItemClicked: () {},
+                                    onMoreOptionClicked: () {
+                                      showServicesOptions(context);
+                                    },
+                                    label: subCategories.subCategoryName,
+                                    fontSize: fontSize,
+                                    services: subCategories.services,
+                                  ),
+                                );
+                              },
+                            ),
                         ],
                       );
-                      }
-                    );
-                  }else{
-                    return HomeScreenCategorizedShimmer();
-                  }
-                },
-              ),
-            )
-          ],
-        ),
+                    }),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -986,22 +1182,311 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((duration){
+    WidgetsBinding.instance.addPostFrameCallback((duration) {
       _init();
       ShippingAddressList.fetchAddresses();
     });
   }
 
-  void _init()async{
+  void _init() async {
     _cartItems = await getCartItems();
-    setState((){
-      if(_cartItems != null){
+    setState(() {
+      if (_cartItems != null) {
         _cartItemsCount = _cartItems!.data.length;
       }
     });
   }
 
-  Future<CategoriesServiceModel?> fetchHomeScreenData() async {
+  Widget _buildErrorWidget(String errorMessage) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, color: Colors.red, size: 50),
+            const SizedBox(height: 10),
+            FittedBox(
+              fit: BoxFit.contain,
+              child: Text(
+                "Oops! Something went wrong.",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              errorMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+              onPressed: (){
+                setState(() {
+
+                });
+              }, // Calls the retry function
+              icon: Icon(Icons.refresh),
+              label: Text("Try Again"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static Future<bool> isConnected() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  Future<CategoriesServiceModel?> _fetchHomeScreenData() async {
+    var dummydata = {
+      "Categories": [
+        {
+          "id": 1,
+          "CategoryName": "Home Services",
+          "Description":
+              "Professional services for home maintenance and improvement.",
+          "IconURL": "https://example.com/icon_home.png",
+          "ThumbnailURL": "https://example.com/thumbnail_home.png",
+          "SubCategory": [
+            {
+              "id": 101,
+              "CID": 1,
+              "SubCategoryName": "Cleaning",
+              "Description": "Expert cleaning services for homes and offices.",
+              "IconURL": "https://example.com/icon_cleaning.png",
+              "ThumbnailURL": "https://example.com/thumbnail_cleaning.png",
+              "Services": [
+                {
+                  "id": 1001,
+                  "CID": 1,
+                  "SID": 101,
+                  "ServiceName": "Deep Cleaning",
+                  "Description": "Thorough deep cleaning for your home.",
+                  "StrikePrice": 120,
+                  "Price": 100,
+                  "Duration": 180,
+                  "IconURL": "https://example.com/icon_deep_cleaning.png",
+                  "ThumbnailURL":
+                      "https://example.com/thumbnail_deep_cleaning.png",
+                  "Included": "Vacuuming, Dusting, Mopping, Sanitization",
+                  "PleaseNote": "Time may vary based on house size.",
+                  "Rating": 4.8,
+                  "SubServices": [],
+                  "Reviews": []
+                },
+                {
+                  "id": 1002,
+                  "CID": 1,
+                  "SID": 101,
+                  "ServiceName": "Sofa Cleaning",
+                  "Description": "Deep cleaning and stain removal for sofas.",
+                  "StrikePrice": 80,
+                  "Price": 60,
+                  "Duration": 90,
+                  "IconURL": "https://example.com/icon_sofa_cleaning.png",
+                  "ThumbnailURL":
+                      "https://example.com/thumbnail_sofa_cleaning.png",
+                  "Included": "Shampooing, Vacuuming, Stain Removal",
+                  "PleaseNote": "Drying time required.",
+                  "Rating": 4.6,
+                  "SubServices": [],
+                  "Reviews": []
+                }
+              ]
+            },
+            {
+              "id": 102,
+              "CID": 1,
+              "SubCategoryName": "Plumbing",
+              "Description": "Quick and reliable plumbing services.",
+              "IconURL": "https://example.com/icon_plumbing.png",
+              "ThumbnailURL": "https://example.com/thumbnail_plumbing.png",
+              "Services": [
+                {
+                  "id": 1003,
+                  "CID": 1,
+                  "SID": 102,
+                  "ServiceName": "Leak Repair",
+                  "Description": "Fix leaky pipes, taps, and showers.",
+                  "StrikePrice": 70,
+                  "Price": 55,
+                  "Duration": 60,
+                  "IconURL": "https://example.com/icon_leak_repair.png",
+                  "ThumbnailURL":
+                      "https://example.com/thumbnail_leak_repair.png",
+                  "Included": "Pipe Fixing, Tap Replacement",
+                  "PleaseNote": "Extra charge for parts.",
+                  "Rating": 4.7,
+                  "SubServices": [],
+                  "Reviews": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "CategoryName": "Beauty & Wellness",
+          "Description": "Relaxing beauty and wellness services.",
+          "IconURL": "https://example.com/icon_beauty.png",
+          "ThumbnailURL": "https://example.com/thumbnail_beauty.png",
+          "SubCategory": [
+            {
+              "id": 201,
+              "CID": 2,
+              "SubCategoryName": "Hair Care",
+              "Description": "Professional hair treatments and styling.",
+              "IconURL": "https://example.com/icon_haircare.png",
+              "ThumbnailURL": "https://example.com/thumbnail_haircare.png",
+              "Services": [
+                {
+                  "id": 2001,
+                  "CID": 2,
+                  "SID": 201,
+                  "ServiceName": "Hair Spa",
+                  "Description": "Revitalizing hair spa treatment.",
+                  "StrikePrice": 50,
+                  "Price": 40,
+                  "Duration": 45,
+                  "IconURL": "https://example.com/icon_hair_spa.png",
+                  "ThumbnailURL": "https://example.com/thumbnail_hair_spa.png",
+                  "Included": "Hair Wash, Massage, Conditioning",
+                  "PleaseNote": "Suitable for all hair types.",
+                  "Rating": 4.9,
+                  "SubServices": [],
+                  "Reviews": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "CategoryName": "Automotive",
+          "Description": "Car and bike maintenance services.",
+          "IconURL": "https://example.com/icon_auto.png",
+          "ThumbnailURL": "https://example.com/thumbnail_auto.png",
+          "SubCategory": [
+            {
+              "id": 301,
+              "CID": 3,
+              "SubCategoryName": "Car Repair",
+              "Description": "Repair and servicing for all types of cars.",
+              "IconURL": "https://example.com/icon_car_repair.png",
+              "ThumbnailURL": "https://example.com/thumbnail_car_repair.png",
+              "Services": [
+                {
+                  "id": 3001,
+                  "CID": 3,
+                  "SID": 301,
+                  "ServiceName": "Car Oil Change",
+                  "Description": "Full synthetic oil change service.",
+                  "StrikePrice": 100,
+                  "Price": 80,
+                  "Duration": 30,
+                  "IconURL": "https://example.com/icon_oil_change.png",
+                  "ThumbnailURL":
+                      "https://example.com/thumbnail_oil_change.png",
+                  "Included": "Oil Filter Change, Engine Check",
+                  "PleaseNote": "Extra charges for premium oil.",
+                  "Rating": 4.7,
+                  "SubServices": [],
+                  "Reviews": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "CategoryName": "Fitness",
+          "Description": "Personalized fitness services.",
+          "IconURL": "https://example.com/icon_fitness.png",
+          "ThumbnailURL": "https://example.com/thumbnail_fitness.png",
+          "SubCategory": [
+            {
+              "id": 401,
+              "CID": 4,
+              "SubCategoryName": "Personal Training",
+              "Description": "Get fit with expert trainers.",
+              "IconURL": "https://example.com/icon_trainer.png",
+              "ThumbnailURL": "https://example.com/thumbnail_trainer.png",
+              "Services": [
+                {
+                  "id": 4001,
+                  "CID": 4,
+                  "SID": 401,
+                  "ServiceName": "Yoga Session",
+                  "Description": "Relaxing and strengthening yoga sessions.",
+                  "StrikePrice": 60,
+                  "Price": 45,
+                  "Duration": 60,
+                  "IconURL": "https://example.com/icon_yoga.png",
+                  "ThumbnailURL": "https://example.com/thumbnail_yoga.png",
+                  "Included": "Breathing Exercises, Meditation",
+                  "PleaseNote": "Bring your own yoga mat.",
+                  "Rating": 4.9,
+                  "SubServices": [],
+                  "Reviews": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "CategoryName": "Electronics Repair",
+          "Description":
+              "Repair services for mobile, laptops, and other electronics.",
+          "IconURL": "https://example.com/icon_electronics.png",
+          "ThumbnailURL": "https://example.com/thumbnail_electronics.png",
+          "SubCategory": [
+            {
+              "id": 501,
+              "CID": 5,
+              "SubCategoryName": "Mobile Repair",
+              "Description": "Professional mobile phone repair services.",
+              "IconURL": "https://example.com/icon_mobile_repair.png",
+              "ThumbnailURL": "https://example.com/thumbnail_mobile_repair.png",
+              "Services": [
+                {
+                  "id": 5001,
+                  "CID": 5,
+                  "SID": 501,
+                  "ServiceName": "Screen Replacement",
+                  "Description":
+                      "High-quality screen replacement for all brands.",
+                  "StrikePrice": 150,
+                  "Price": 120,
+                  "Duration": 45,
+                  "IconURL": "https://example.com/icon_screen_replace.png",
+                  "ThumbnailURL":
+                      "https://example.com/thumbnail_screen_replace.png",
+                  "Included": "Screen Replacement, Warranty",
+                  "PleaseNote": "Genuine parts used.",
+                  "Rating": 4.8,
+                  "SubServices": [],
+                  "Reviews": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    bool hasInternet = await isConnected();
+    if (!hasInternet) {
+      return Future.error("No Internet Connection. Please check your network.");
+    }
+
     try {
       var uri = Uri.https(Urls.base_url, Urls.categories);
       var response = await get(uri, headers: {
@@ -1009,31 +1494,34 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen> {
       });
       print(response.body);
       if (response.statusCode == 200) {
-        return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+        return CategoriesServiceModel.fromJson(
+            dummydata as Map<String, dynamic>);
+        // return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
       } else {
-        print('Server error: ${response.statusCode} - ${response.reasonPhrase}');
+        print(
+            'Server error: ${response.statusCode} - ${response.reasonPhrase}');
         return null;
       }
     } on SocketException catch (e) {
       print('No internet connection: $e');
-      return null;
+      return Future.error("No Internet Connection. Please check your network.");
     } on HttpException catch (e) {
       print('HTTP Exception: $e');
-      return null;
+      return Future.error("Server error. Please try again later.");
     } on FormatException catch (e) {
-      print('Bad response format: $e');
+      return Future.error("Something went wrong!!. Please try again later.");
       return null;
     } catch (e) {
       print('Unexpected error: $e');
-      return null;
+      return Future.error("Something went wrong!!. Please try again later.");
     }
   }
 
-  void refresh()async{
+  void refresh() async {
     _init();
   }
-}
 
+}
 
 class CategorizedService extends StatelessWidget {
   final double fontSize;
@@ -1052,7 +1540,13 @@ class CategorizedService extends StatelessWidget {
     'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
     'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
   ];
-  CategorizedService({this.onMoreOptionClicked,this.onItemClicked,required this.label, required this.fontSize,required this.services,});
+  CategorizedService({
+    this.onMoreOptionClicked,
+    this.onItemClicked,
+    required this.label,
+    required this.fontSize,
+    required this.services,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1060,7 +1554,7 @@ class CategorizedService extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height;
     double gridSpacing = screenWidth * 0.03;
     return Container(
-      height: screenWidth * 1.1,
+      // height: screenWidth * 1.1,
       color: Colors.white,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1080,55 +1574,89 @@ class CategorizedService extends StatelessWidget {
                       label,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: fontSize,),
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: fontSize, fontWeight: FontWeight.normal),
                     ),
                   ),
                 ),
-                SizedBox(width:  screenWidth * 0.02,),
-                TextButton(
-                  onPressed: onMoreOptionClicked,
-                  child: Text('See all', style: TextStyle(fontSize: fontSize*0.8)),
+                SizedBox(
+                  width: screenWidth * 0.02,
                 ),
+                // TextButton(
+                //   onPressed: onMoreOptionClicked,
+                //   child: Text('See all', style: TextStyle(fontSize: fontSize*0.8)),
+                // ),
               ],
             ),
           ),
-          Flexible(
-            flex: 3,
-            fit: FlexFit.loose,
-            child: ListView.builder(
-              shrinkWrap: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: services.length,
-              itemBuilder: (context, index) {
-                return CategoryCard(
-                  onTap:(){
-                    showServiceDetails(context,service: services[index],);
-                    // Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,service: services[index],)));
-                  },
-                  image: imageUrls[index],
-                  label: services[index].serviceName,
-                  rating: '4.78(1.9M)',
-                  price: services[index].price.toString(),
-                );
-              },
-            ),
-          ),
-          SizedBox(height: screenHeight * 0.01),
-          Flexible(
-            flex: 3,
-            fit: FlexFit.loose,
-            child: CategorySlideCard(services: services,
-              onPressed: (){
-                showServiceDetails(context);
-              },
-            ),
-          ),
+          if (services.isEmpty) Flexible(
+                  fit: FlexFit.loose,
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(vertical: screenWidth * 0.05),
+                    child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          'No Service Available',
+                          style: TextStyle(color: Colors.grey),
+                        )),
+                  )) else Flexible(
+                  flex: 6,
+                  fit: FlexFit.loose,
+                  child: Container(
+                    // height: screenWidth * 1.1,
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          flex: 3,
+                          fit: FlexFit.loose,
+                          child: SizedBox(
+                            height: screenWidth * 0.52,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              scrollDirection: Axis.horizontal,
+                              itemCount: services.length,
+                              itemBuilder: (context, index) {
+                                return CategoryCard(
+                                  onTap: () {
+                                    showServiceDetails(
+                                      context,
+                                      service: services[index],
+                                    );
+                                    // Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,service: services[index],)));
+                                  },
+                                  image: imageUrls[index],
+                                  label: services[index].serviceName,
+                                  rating: '4.78(1.9M)',
+                                  price: services[index].price.toString(),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        // SizedBox(height: screenHeight * 0.01),
+                        if(services.length>1)
+                        Flexible(
+                          flex: 3,
+                          fit: FlexFit.loose,
+                          child: SizedBox(height: screenWidth * 0.55,
+                            child: CategorySlideCard(
+                              services: services,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
         ],
       ),
     );
   }
 }
-
 
 class CategoryCard extends StatelessWidget {
   final String image;
@@ -1136,7 +1664,13 @@ class CategoryCard extends StatelessWidget {
   final String rating;
   final String price;
   final VoidCallback? onTap;
-  CategoryCard({this.onTap,required this.image, required this.label, required this.rating, required this.price,});
+  CategoryCard({
+    this.onTap,
+    required this.image,
+    required this.label,
+    required this.rating,
+    required this.price,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1144,7 +1678,7 @@ class CategoryCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
-        width: screenWidth*0.35,
+        width: screenWidth * 0.35,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -1186,7 +1720,8 @@ class CategoryCard extends StatelessWidget {
                       fit: BoxFit.scaleDown,
                       child: Text(
                         rating,
-                        style: TextStyle(fontSize: screenWidth * 0.035,height: 1.1),
+                        style: TextStyle(
+                            fontSize: screenWidth * 0.035, height: 1.1),
                       ),
                     ),
                   ),
@@ -1198,13 +1733,17 @@ class CategoryCard extends StatelessWidget {
               padding: const EdgeInsets.only(left: 4.0),
               child: Row(
                 children: [
-                  FittedBox( fit: BoxFit.scaleDown,child: Icon(Icons.currency_rupee_rounded, size: screenWidth * 0.035)),
+                  FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Icon(Icons.currency_rupee_rounded,
+                          size: screenWidth * 0.035)),
                   SizedBox(width: 2),
                   FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
                       price,
-                      style: TextStyle(fontSize: screenWidth * 0.035,height: 1.1),
+                      style:
+                          TextStyle(fontSize: screenWidth * 0.035, height: 1.1),
                     ),
                   ),
                 ],
@@ -1216,11 +1755,3 @@ class CategoryCard extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
