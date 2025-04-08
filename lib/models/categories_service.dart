@@ -21,6 +21,18 @@ class CategoriesServiceModel {
     "Categories": categories.map((x) => x.toJson()).toList(),
   };
 
+  static Service? getServiceById(int serviceId) {
+    for (var category in _categories) {
+      for (var subCategory in category.subCategory) {
+        for (var service in subCategory.services) {
+          if (service.id == serviceId) {
+            return service;
+          }
+        }
+      }
+    }
+    return null;
+  }
 }
 
 class Category {
@@ -40,14 +52,23 @@ class Category {
   final String thumbnailUrl;
   final List<SubCategory> subCategory;
 
-  factory Category.fromJson(Map<String, dynamic> json){
+  factory Category.fromJson(Map<String, dynamic> json) {
+    List<dynamic> subCatJson = json["SubCategory"] ?? [];
+
+    // Filter out SubCategories where Services is not a non-empty List
+    List<SubCategory> filteredSubCategories = subCatJson
+        .where((item) =>
+    item["Services"] is List && item["Services"].isNotEmpty)
+        .map<SubCategory>((item) => SubCategory.fromJson(item))
+        .toList();
+
     return Category(
       id: json["id"] ?? 0,
       categoryName: json["CategoryName"] ?? "",
       description: json["Description"] ?? "",
       iconUrl: json["IconURL"] ?? "",
       thumbnailUrl: json["ThumbnailURL"] ?? "",
-      subCategory: json["SubCategory"] == null ? [] : List<SubCategory>.from(json["SubCategory"]!.map((x) => SubCategory.fromJson(x))),
+      subCategory: filteredSubCategories,
     );
   }
 

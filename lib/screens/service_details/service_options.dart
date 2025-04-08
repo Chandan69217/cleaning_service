@@ -1,5 +1,5 @@
 import 'package:cleaning_service/models/categories_service.dart';
-import 'package:cleaning_service/screens/all_service_list_screen.dart';
+import 'package:cleaning_service/screens/service_details/all_service_list_screen.dart';
 import 'package:flutter/material.dart';
 
 void showServicesOptions(BuildContext context) {
@@ -58,7 +58,7 @@ class _ServiceOptionScreen extends StatelessWidget {
               padding: EdgeInsets.all(screenWidth * 0.05),
               child: GridView.builder(
                 shrinkWrap: true,
-                itemCount: CategoriesServiceModel.globalCategories.length,
+                itemCount: CategoriesServiceModel.globalCategories[0].subCategory.length,
                 physics: NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 4,
@@ -67,11 +67,11 @@ class _ServiceOptionScreen extends StatelessWidget {
                   mainAxisSpacing: screenWidth * 0.05,
                 ),
                 itemBuilder: (BuildContext context, int index) {
-                  var categories = CategoriesServiceModel.globalCategories;
+                  var categories = CategoriesServiceModel.globalCategories[0].subCategory;
                   return _buildService(onTap: () {
                     Navigator.pop(context);
                     Navigator.of(context).push(MaterialPageRoute(builder: (context)=> AllServicesListScreen(category: categories[index],)));
-                  }, context,categories[index].categoryName,
+                  }, context,categories[index].subCategoryName,
                       'assets/icons/electrician-service.webp');
                 },
               ),

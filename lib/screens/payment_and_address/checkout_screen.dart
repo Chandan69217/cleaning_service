@@ -24,6 +24,7 @@ class CheckoutSuccessScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Lottie.asset(
               'assets/success_animation.json', // Add your animation file here
@@ -44,29 +45,29 @@ class CheckoutSuccessScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             // Booking Summary Card
-            Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    _BookingRow(label: 'Service', value: 'Salon at Home'),
-                    SizedBox(height: 10),
-                    _BookingRow(label: 'Date', value: 'March 26, 2025'),
-                    SizedBox(height: 10),
-                    Divider(thickness: 1),
-                    SizedBox(height: 10),
-                    _BookingRow(label: 'Total Amount', value: '₹998'),
-                  ],
-                ),
-              ),
-            ),
-            const Spacer(),
+            // Card(
+            //   shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.circular(16),
+            //   ),
+            //   elevation: 3,
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(
+            //         vertical: 20.0, horizontal: 16.0),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: const [
+            //         _BookingRow(label: 'Service', value: 'Salon at Home'),
+            //         SizedBox(height: 10),
+            //         _BookingRow(label: 'Date', value: 'March 26, 2025'),
+            //         SizedBox(height: 10),
+            //         Divider(thickness: 1),
+            //         SizedBox(height: 10),
+            //         _BookingRow(label: 'Total Amount', value: '₹998'),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+            // const Spacer(),
             ElevatedButton(
               onPressed: () {
                 Navigator.popUntil(context, (route) => route.isFirst);

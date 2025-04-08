@@ -12,20 +12,26 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Dashboard extends StatefulWidget{
+  Dashboard({super.key});
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<Dashboard> createState() => DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class DashboardState extends State<Dashboard> {
   int _currentIndex = 0;
   late bool _isLoggedIn;
-  final List<Widget> _screens = [LoggedInHomeScreen(key:Keys.homeScreenKey,),BookingsScreen(),RewardsScreen(),AccountScreen()];
+  final List<Widget> _screens = [LoggedInHomeScreen(key:Keys.homeScreenKey,),BookingsScreen(key: Keys.bookingScreenKey,),RewardsScreen(),AccountScreen()];
   final List<Widget> _skippedScreens = [SkipeedHomeScreen(),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check booking information',),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check your reward information',),SkippedAccountScreen(),];
   @override
   void initState() {
     super.initState();
     _isLoggedIn = Pref.instance.getBool(Consts.isLogin)??false;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: [SystemUiOverlay.top,SystemUiOverlay.bottom]);
+  }
+  refresh(){
+    setState(() {
+
+    });
   }
 
   @override

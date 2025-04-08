@@ -4,11 +4,11 @@ import 'dart:io';
 import 'package:cleaning_service/models/cart_items.dart';
 import 'package:cleaning_service/models/global_keys.dart';
 import 'package:cleaning_service/models/shipping_address.dart';
-import 'package:cleaning_service/screens/all_service_list_screen.dart';
-import 'package:cleaning_service/screens/cart_screen.dart';
+import 'package:cleaning_service/screens/service_details/all_service_list_screen.dart';
+import 'package:cleaning_service/screens/cart/cart_screen.dart';
 import 'package:cleaning_service/screens/search_screen.dart';
-import 'package:cleaning_service/screens/service_details_screen.dart';
-import 'package:cleaning_service/screens/service_options.dart';
+import 'package:cleaning_service/screens/service_details/service_details_screen.dart';
+import 'package:cleaning_service/screens/service_details/service_options.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/get_cart_items.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -764,17 +764,17 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  List<String> imageUrls = [
-    'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
-    'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
-    'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
-  ];
+  // List<String> imageUrls = [
+  //   'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
+  //   'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
+  //   'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
+  // ];
 
   @override
   void initState() {
@@ -848,10 +848,21 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10.0),
-                      child: Image.network(
-                        imageUrls[index],
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/icons/image_placeholder.webp', // Your asset placeholder image
+                        image: service.thumbnailUrl,
                         fit: BoxFit.cover,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            'assets/icons/image_placeholder.webp', // Your fallback asset image
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
+                      // child: Image.network(
+                      //   service.thumbnailUrl,
+                      //   fit: BoxFit.cover,
+                      // ),
                     ),
                     // Text overlay at the top left
                     Positioned(
@@ -940,6 +951,8 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
   }
 }
 
+
+
 class LoggedInHomeScreen extends StatefulWidget {
   LoggedInHomeScreen({super.key});
   @override
@@ -950,6 +963,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
   int _cartItemsCount = 0;
   CartItemsList? _cartItems;
   final PageController _pageController = PageController();
+  late Future<CategoriesServiceModel?> _categories;
   static final int itemsPerPage = 4; // Number of items per page
 
 
@@ -964,7 +978,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
     return Scaffold(
       backgroundColor: CustColors.white,
       body: FutureBuilder(
-        future: _fetchHomeScreenData(),
+        future: _categories,
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SingleChildScrollView(child: HomeScreenCategorizedShimmer());
@@ -977,7 +991,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
           // Model Class
           final model = snapshot.data;
           // All Categories Data Received
-          final categories = model!.categories;
+          final categories = model!.categories[0].subCategory;
           // Checking if Categories is empty
           int pageCount = (categories.length / itemsPerPage).ceil();
           return SingleChildScrollView(
@@ -987,9 +1001,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
                   fontSize: fontSize,
                   iconSize: iconSize,
                   onCart: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CartScreen(
-                        cartItems: _cartItems,
-                      ))),
+                      builder: (context) => CartScreen())),
                   onSearch: () =>
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => SearchScreen(),
@@ -1017,7 +1029,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
                                   ? categories.length
                                   : (startIndex + itemsPerPage);
                   
-                              List<Category> pageItems =
+                              List<SubCategory> pageItems =
                               categories.sublist(startIndex, endIndex);
                               return Padding(
                                 padding: EdgeInsets.all(screenWidth * 0.05),
@@ -1033,7 +1045,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
                                   physics: NeverScrollableScrollPhysics(),
                                   shrinkWrap: true,
                                   itemBuilder: (_, index) => MenuItems(
-                                    label: pageItems[index].categoryName,
+                                    label: pageItems[index].subCategoryName,
                                     icon: 'assets/icons/vacuum.webp',
                                     fontSize: fontSize,
                                     onTap: () {
@@ -1066,6 +1078,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
                       ],
                     ),
                   ),
+
                 categories.isEmpty
                     ? Center(
                   child: Text(
@@ -1081,94 +1094,17 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
                     shrinkWrap: true,
                     itemBuilder: (__, index) {
                       final category = categories[index];
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            color: Colors.white,
-                            margin:
-                            EdgeInsets.only(top: screenWidth * 0.01),
-                            padding: EdgeInsets.only(
-                                top: screenWidth * 0.03,
-                                left: screenWidth * 0.05,
-                                bottom: screenWidth * 0.03,
-                                right: screenWidth * 0.01),
-                            child: Row(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceBetween,
-                              children: [
-                                Flexible(
-                                  fit: FlexFit.loose,
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child: Text(
-                                      category.categoryName,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyLarge!
-                                          .copyWith(
-                                        fontSize: fontSize,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: screenWidth * 0.02,
-                                ),
-                                SizedBox(
-                                  height: 25.0,
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AllServicesListScreen(
-                                                    category: category,
-                                                  )));
-                                    },
-                                    child: Text('See all',
-                                        style: TextStyle(
-                                            fontSize: fontSize * 0.8)),
-                                    style: TextButton.styleFrom(
-                                        padding: EdgeInsets.zero),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (category.subCategory.isNotEmpty)
-                            ListView.builder(
-                              itemCount: category.subCategory.length,
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemBuilder:
-                                  (BuildContext context, int index) {
-                                final subCategories =
-                                category.subCategory[index];
-                                return Container(
-                                  // margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
-                                  padding: EdgeInsets.only(
-                                      left: screenWidth * 0.05,
-                                      bottom: screenWidth * 0.05,
-                                      right: screenWidth * 0.05),
-                                  decoration:
-                                  BoxDecoration(color: Colors.white),
-                                  child: CategorizedService(
-                                    onItemClicked: () {},
-                                    onMoreOptionClicked: () {
-                                      showServicesOptions(context);
-                                    },
-                                    label: subCategories.subCategoryName,
-                                    fontSize: fontSize,
-                                    services: subCategories.services,
-                                  ),
-                                );
-                              },
-                            ),
-                        ],
+                      return Container(
+                        // margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
+                        padding: EdgeInsets.only(
+                            left: screenWidth * 0.05,
+                            bottom: screenWidth * 0.05,
+                            right: screenWidth * 0.05),
+                        decoration:
+                        BoxDecoration(color: Colors.white),
+                        child: CategorizedService(
+                          category: category,
+                        ),
                       );
                     }),
               ],
@@ -1182,19 +1118,21 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
   @override
   void initState() {
     super.initState();
+    _categories = _fetchHomeScreenData();
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       _init();
       ShippingAddressList.fetchAddresses();
     });
   }
 
-  void _init() async {
+  Future<bool> _init() async {
     _cartItems = await getCartItems();
     setState(() {
       if (_cartItems != null) {
         _cartItemsCount = _cartItems!.data.length;
       }
     });
+    return true;
   }
 
   Widget _buildErrorWidget(String errorMessage) {
@@ -1245,242 +1183,6 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
   }
 
   Future<CategoriesServiceModel?> _fetchHomeScreenData() async {
-    var dummydata = {
-      "Categories": [
-        {
-          "id": 1,
-          "CategoryName": "Home Services",
-          "Description":
-              "Professional services for home maintenance and improvement.",
-          "IconURL": "https://example.com/icon_home.png",
-          "ThumbnailURL": "https://example.com/thumbnail_home.png",
-          "SubCategory": [
-            {
-              "id": 101,
-              "CID": 1,
-              "SubCategoryName": "Cleaning",
-              "Description": "Expert cleaning services for homes and offices.",
-              "IconURL": "https://example.com/icon_cleaning.png",
-              "ThumbnailURL": "https://example.com/thumbnail_cleaning.png",
-              "Services": [
-                {
-                  "id": 1001,
-                  "CID": 1,
-                  "SID": 101,
-                  "ServiceName": "Deep Cleaning",
-                  "Description": "Thorough deep cleaning for your home.",
-                  "StrikePrice": 120,
-                  "Price": 100,
-                  "Duration": 180,
-                  "IconURL": "https://example.com/icon_deep_cleaning.png",
-                  "ThumbnailURL":
-                      "https://example.com/thumbnail_deep_cleaning.png",
-                  "Included": "Vacuuming, Dusting, Mopping, Sanitization",
-                  "PleaseNote": "Time may vary based on house size.",
-                  "Rating": 4.8,
-                  "SubServices": [],
-                  "Reviews": []
-                },
-                {
-                  "id": 1002,
-                  "CID": 1,
-                  "SID": 101,
-                  "ServiceName": "Sofa Cleaning",
-                  "Description": "Deep cleaning and stain removal for sofas.",
-                  "StrikePrice": 80,
-                  "Price": 60,
-                  "Duration": 90,
-                  "IconURL": "https://example.com/icon_sofa_cleaning.png",
-                  "ThumbnailURL":
-                      "https://example.com/thumbnail_sofa_cleaning.png",
-                  "Included": "Shampooing, Vacuuming, Stain Removal",
-                  "PleaseNote": "Drying time required.",
-                  "Rating": 4.6,
-                  "SubServices": [],
-                  "Reviews": []
-                }
-              ]
-            },
-            {
-              "id": 102,
-              "CID": 1,
-              "SubCategoryName": "Plumbing",
-              "Description": "Quick and reliable plumbing services.",
-              "IconURL": "https://example.com/icon_plumbing.png",
-              "ThumbnailURL": "https://example.com/thumbnail_plumbing.png",
-              "Services": [
-                {
-                  "id": 1003,
-                  "CID": 1,
-                  "SID": 102,
-                  "ServiceName": "Leak Repair",
-                  "Description": "Fix leaky pipes, taps, and showers.",
-                  "StrikePrice": 70,
-                  "Price": 55,
-                  "Duration": 60,
-                  "IconURL": "https://example.com/icon_leak_repair.png",
-                  "ThumbnailURL":
-                      "https://example.com/thumbnail_leak_repair.png",
-                  "Included": "Pipe Fixing, Tap Replacement",
-                  "PleaseNote": "Extra charge for parts.",
-                  "Rating": 4.7,
-                  "SubServices": [],
-                  "Reviews": []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "CategoryName": "Beauty & Wellness",
-          "Description": "Relaxing beauty and wellness services.",
-          "IconURL": "https://example.com/icon_beauty.png",
-          "ThumbnailURL": "https://example.com/thumbnail_beauty.png",
-          "SubCategory": [
-            {
-              "id": 201,
-              "CID": 2,
-              "SubCategoryName": "Hair Care",
-              "Description": "Professional hair treatments and styling.",
-              "IconURL": "https://example.com/icon_haircare.png",
-              "ThumbnailURL": "https://example.com/thumbnail_haircare.png",
-              "Services": [
-                {
-                  "id": 2001,
-                  "CID": 2,
-                  "SID": 201,
-                  "ServiceName": "Hair Spa",
-                  "Description": "Revitalizing hair spa treatment.",
-                  "StrikePrice": 50,
-                  "Price": 40,
-                  "Duration": 45,
-                  "IconURL": "https://example.com/icon_hair_spa.png",
-                  "ThumbnailURL": "https://example.com/thumbnail_hair_spa.png",
-                  "Included": "Hair Wash, Massage, Conditioning",
-                  "PleaseNote": "Suitable for all hair types.",
-                  "Rating": 4.9,
-                  "SubServices": [],
-                  "Reviews": []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "CategoryName": "Automotive",
-          "Description": "Car and bike maintenance services.",
-          "IconURL": "https://example.com/icon_auto.png",
-          "ThumbnailURL": "https://example.com/thumbnail_auto.png",
-          "SubCategory": [
-            {
-              "id": 301,
-              "CID": 3,
-              "SubCategoryName": "Car Repair",
-              "Description": "Repair and servicing for all types of cars.",
-              "IconURL": "https://example.com/icon_car_repair.png",
-              "ThumbnailURL": "https://example.com/thumbnail_car_repair.png",
-              "Services": [
-                {
-                  "id": 3001,
-                  "CID": 3,
-                  "SID": 301,
-                  "ServiceName": "Car Oil Change",
-                  "Description": "Full synthetic oil change service.",
-                  "StrikePrice": 100,
-                  "Price": 80,
-                  "Duration": 30,
-                  "IconURL": "https://example.com/icon_oil_change.png",
-                  "ThumbnailURL":
-                      "https://example.com/thumbnail_oil_change.png",
-                  "Included": "Oil Filter Change, Engine Check",
-                  "PleaseNote": "Extra charges for premium oil.",
-                  "Rating": 4.7,
-                  "SubServices": [],
-                  "Reviews": []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 4,
-          "CategoryName": "Fitness",
-          "Description": "Personalized fitness services.",
-          "IconURL": "https://example.com/icon_fitness.png",
-          "ThumbnailURL": "https://example.com/thumbnail_fitness.png",
-          "SubCategory": [
-            {
-              "id": 401,
-              "CID": 4,
-              "SubCategoryName": "Personal Training",
-              "Description": "Get fit with expert trainers.",
-              "IconURL": "https://example.com/icon_trainer.png",
-              "ThumbnailURL": "https://example.com/thumbnail_trainer.png",
-              "Services": [
-                {
-                  "id": 4001,
-                  "CID": 4,
-                  "SID": 401,
-                  "ServiceName": "Yoga Session",
-                  "Description": "Relaxing and strengthening yoga sessions.",
-                  "StrikePrice": 60,
-                  "Price": 45,
-                  "Duration": 60,
-                  "IconURL": "https://example.com/icon_yoga.png",
-                  "ThumbnailURL": "https://example.com/thumbnail_yoga.png",
-                  "Included": "Breathing Exercises, Meditation",
-                  "PleaseNote": "Bring your own yoga mat.",
-                  "Rating": 4.9,
-                  "SubServices": [],
-                  "Reviews": []
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 5,
-          "CategoryName": "Electronics Repair",
-          "Description":
-              "Repair services for mobile, laptops, and other electronics.",
-          "IconURL": "https://example.com/icon_electronics.png",
-          "ThumbnailURL": "https://example.com/thumbnail_electronics.png",
-          "SubCategory": [
-            {
-              "id": 501,
-              "CID": 5,
-              "SubCategoryName": "Mobile Repair",
-              "Description": "Professional mobile phone repair services.",
-              "IconURL": "https://example.com/icon_mobile_repair.png",
-              "ThumbnailURL": "https://example.com/thumbnail_mobile_repair.png",
-              "Services": [
-                {
-                  "id": 5001,
-                  "CID": 5,
-                  "SID": 501,
-                  "ServiceName": "Screen Replacement",
-                  "Description":
-                      "High-quality screen replacement for all brands.",
-                  "StrikePrice": 150,
-                  "Price": 120,
-                  "Duration": 45,
-                  "IconURL": "https://example.com/icon_screen_replace.png",
-                  "ThumbnailURL":
-                      "https://example.com/thumbnail_screen_replace.png",
-                  "Included": "Screen Replacement, Warranty",
-                  "PleaseNote": "Genuine parts used.",
-                  "Rating": 4.8,
-                  "SubServices": [],
-                  "Reviews": []
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    };
 
     bool hasInternet = await isConnected();
     if (!hasInternet) {
@@ -1494,9 +1196,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
       });
       print(response.body);
       if (response.statusCode == 200) {
-        return CategoriesServiceModel.fromJson(
-            dummydata as Map<String, dynamic>);
-        // return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+        return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
       } else {
         print(
             'Server error: ${response.statusCode} - ${response.reasonPhrase}');
@@ -1517,35 +1217,27 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
     }
   }
 
-  void refresh() async {
-    _init();
+  Future<bool> refresh() async {
+   return await _init();
   }
 
 }
 
 class CategorizedService extends StatelessWidget {
-  final double fontSize;
-  final label;
-  final List<Service> services;
-  final VoidCallback? onItemClicked;
-  final VoidCallback? onMoreOptionClicked;
-  List<String> imageUrls = [
-    'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
-    'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
-    'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-    'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
-  ];
+  final SubCategory category;
+  // List<String> imageUrls = [
+  //   'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
+  //   'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
+  //   'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
+  //   'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
+  // ];
   CategorizedService({
-    this.onMoreOptionClicked,
-    this.onItemClicked,
-    required this.label,
-    required this.fontSize,
-    required this.services,
+    required this.category,
   });
 
   @override
@@ -1553,6 +1245,7 @@ class CategorizedService extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double gridSpacing = screenWidth * 0.03;
+    double fontSize = screenWidth * 0.05;
     return Container(
       // height: screenWidth * 1.1,
       color: Colors.white,
@@ -1571,25 +1264,32 @@ class CategorizedService extends StatelessWidget {
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
                     child: Text(
-                      label,
+                      category.subCategoryName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: fontSize, fontWeight: FontWeight.normal),
+                          fontSize: fontSize, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
                 SizedBox(
                   width: screenWidth * 0.02,
                 ),
-                // TextButton(
-                //   onPressed: onMoreOptionClicked,
-                //   child: Text('See all', style: TextStyle(fontSize: fontSize*0.8)),
-                // ),
+                TextButton(
+                  onPressed: (){
+                    Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                AllServicesListScreen(
+                                  category: category,
+                                )));
+                  },
+                  child: Text('See all', style: TextStyle(fontSize: fontSize*0.8)),
+                ),
               ],
             ),
           ),
-          if (services.isEmpty) Flexible(
+          if (category.services.isEmpty) Flexible(
                   fit: FlexFit.loose,
                   child: Container(
                     alignment: Alignment.center,
@@ -1618,33 +1318,34 @@ class CategorizedService extends StatelessWidget {
                             child: ListView.builder(
                               shrinkWrap: true,
                               scrollDirection: Axis.horizontal,
-                              itemCount: services.length,
+                              itemCount: category.services.length,
                               itemBuilder: (context, index) {
+                                var service = category.services[index];
                                 return CategoryCard(
                                   onTap: () {
                                     showServiceDetails(
                                       context,
-                                      service: services[index],
+                                      service: service,
                                     );
                                     // Navigator.push(context, MaterialPageRoute(builder: (context)=> AllServicesListScreen(isShowServiceDetails: true,service: services[index],)));
                                   },
-                                  image: imageUrls[index],
-                                  label: services[index].serviceName,
+                                  image: service.thumbnailUrl,
+                                  label: service.serviceName,
                                   rating: '4.78(1.9M)',
-                                  price: services[index].price.toString(),
+                                  price: service.price.toString(),
                                 );
                               },
                             ),
                           ),
                         ),
                         // SizedBox(height: screenHeight * 0.01),
-                        if(services.length>1)
+                        if(category.services.length>1)
                         Flexible(
                           flex: 3,
                           fit: FlexFit.loose,
                           child: SizedBox(height: screenWidth * 0.55,
                             child: CategorySlideCard(
-                              services: services,
+                              services: category.services,
                             ),
                           ),
                         ),
@@ -1659,14 +1360,14 @@ class CategorizedService extends StatelessWidget {
 }
 
 class CategoryCard extends StatelessWidget {
-  final String image;
+  final String? image;
   final String label;
   final String rating;
   final String price;
   final VoidCallback? onTap;
   CategoryCard({
     this.onTap,
-    required this.image,
+    this.image,
     required this.label,
     required this.rating,
     required this.price,
@@ -1685,11 +1386,20 @@ class CategoryCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.network(
-                image,
-                width: screenWidth * 0.3,
-                height: screenWidth * 0.3,
+              child: FadeInImage.assetNetwork(
+                  width: screenWidth * 0.3,
+                  height: screenWidth * 0.3,
+                placeholder: 'assets/icons/image_placeholder.webp', // Your asset placeholder image
+                image: image??'assets/icons/image_placeholder.webp',
                 fit: BoxFit.cover,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Image.asset(
+                    'assets/icons/image_placeholder.webp', // Your fallback asset image
+                    fit: BoxFit.cover,
+                    width: screenWidth * 0.3,
+                    height: screenWidth * 0.3,
+                  );
+                },
               ),
             ),
             // SizedBox(height: 8.0),

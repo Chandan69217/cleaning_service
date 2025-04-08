@@ -1,6 +1,7 @@
 import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
 import 'package:cleaning_service/screens/dashboard.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +9,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../models/global_keys.dart';
 import '../../utilities/const.dart';
 import '../../utilities/cust_colors.dart';
 
@@ -60,10 +62,11 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
   bool isFetchingLocation = true;
   String locationMessage = "Fetching your location...";
 
+
   Future<void> _getUserLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
-
+    String formattedAddress = '';
     try {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
@@ -94,37 +97,45 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
       Position position = await Geolocator.getCurrentPosition(
           locationSettings: LocationSettings(accuracy: LocationAccuracy.high));
 
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          position.latitude, position.longitude);
 
-      String formattedAddress =
-      await getAddressFromCoordinates(position.latitude, position.longitude);
-      Data.initialize(
-          addr: formattedAddress, placemarks: placemarks, position: position);
-
-      if (mounted) {
-        setState(() {
-          locationMessage = formattedAddress;
-          isFetchingLocation = false;
-
-          Future.delayed(Duration(milliseconds: 800), () {
-            if (mounted) {
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (_) => Dashboard()));
-            }
-          });
-        });
+      final connectivityResult = await Connectivity().checkConnectivity();
+      if (connectivityResult == ConnectivityResult.none){
+        formattedAddress = "Lat: ${position.latitude}, Lng: ${position.longitude}";
+      } else {
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+            position.latitude, position.longitude);
+        formattedAddress = await getAddressFromCoordinates(
+            position.latitude, position.longitude);
+        Data.initialize(
+            addr: formattedAddress,
+            placemarks: placemarks,
+            position: position);
       }
+
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          locationMessage = "Failed to fetch location: $e";
-          isFetchingLocation = false;
-        });
-      }
+      locationMessage = "Failed to fetch location";
       print("Error occurred: $e");
     }
+
+    if (mounted) {
+      setState(() {
+        locationMessage = formattedAddress;
+        isFetchingLocation = false;
+      });
+    }
+
+    Future.delayed(Duration(milliseconds: 800), () {
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => Dashboard(key: Keys.dashboardScreenKey),
+          ),
+        );
+      }
+    });
   }
+
 
 
 

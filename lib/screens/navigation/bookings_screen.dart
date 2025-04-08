@@ -1,23 +1,24 @@
 import 'dart:convert';
-
 import 'package:cleaning_service/models/booked_service_list.dart';
-import 'package:cleaning_service/screens/service_options.dart';
+import 'package:cleaning_service/screens/service_details/service_options.dart';
 import 'package:cleaning_service/shimmer_effect/category_effect/booking_shimmer_effect.dart';
 import 'package:cleaning_service/utilities/api_urls.dart';
 import 'package:cleaning_service/utilities/const.dart';
-import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-
 import '../booking_track/TrackBookingScreen.dart';
 
+
+
 class BookingsScreen extends StatefulWidget {
+  BookingsScreen({super.key});
   @override
-  State<BookingsScreen> createState() => _BookingsScreenState();
+  State<BookingsScreen> createState() => BookingsScreenState();
+
 }
 
-class _BookingsScreenState extends State<BookingsScreen> {
+class BookingsScreenState extends State<BookingsScreen> {
   // final List<Map<String, dynamic>> bookings = [
   //   {
   //     'service': 'Home Cleaning',
@@ -40,15 +41,30 @@ class _BookingsScreenState extends State<BookingsScreen> {
   // ];
 
   Color _getStatusColor(String status) {
-    switch (status) {
-      case 'Upcoming':
-        return Colors.orange;
-      case 'Completed':
+    switch (status.toLowerCase()) {
+      case 'p':   // Pending
+        return Colors.orangeAccent;
+      case 'pr':  // Processing
+        return Colors.blueAccent;
+      case 'bc':  // Booking Completed
         return Colors.green;
-      case 'Cancelled':
-        return Colors.red;
+      case 'c':   // Cancelled by user
+        return Colors.redAccent;
+      case 'r':   // Rejected by company
+        return Colors.deepOrange;
       default:
         return Colors.grey;
+    }
+  }
+
+  String _getStatusName(String status){
+    switch(status.toLowerCase()){
+      case 'p': return 'Pending';
+      case 'pr': return 'Processing';
+      case 'bc': return 'Booking Completed';
+      case 'c': return 'cancel by user';
+      case 'r': return 'Rejected by company';
+      default: return 'unknown';
     }
   }
 
@@ -103,10 +119,17 @@ class _BookingsScreenState extends State<BookingsScreen> {
                         width: 60.0,
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
-                            booking.image,
-                            fit: BoxFit.fill,
-                          ),
+                          child: FadeInImage.assetNetwork(
+                            placeholder: 'assets/icons/image_placeholder.webp', // Your asset placeholder image
+                            image: booking.image,
+                            fit: BoxFit.cover,
+                            imageErrorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/icons/image_placeholder.webp', // Your fallback asset image
+                                fit: BoxFit.cover,
+                              );
+                            },
+                          )
                         ),
                       ),
                       const SizedBox(width: 12.0),
@@ -136,7 +159,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              booking.status,
+                              _getStatusName(booking.status),
                               // booking.status ?? 'Unknown Status',
                               style: TextStyle(
                                 color: _getStatusColor(booking.status),
@@ -147,7 +170,7 @@ class _BookingsScreenState extends State<BookingsScreen> {
                           ],
                         ),
                       ),
-                      if (booking.status == 'upcoming')
+                      if (_getStatusName(booking.status) == 'upcoming')
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -188,7 +211,10 @@ class _BookingsScreenState extends State<BookingsScreen> {
     );
   }
 
-
+  refresh()async{
+    setState(() {
+    });
+  }
 
   Widget _buildErrorWidget(String errorMessage) {
     return Center(

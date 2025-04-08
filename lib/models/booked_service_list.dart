@@ -9,12 +9,12 @@ class BookedServiceList {
 
   factory BookedServiceList.fromJson(Map<String, dynamic> json){
     return BookedServiceList(
-      bookingsList: json["data"] == null ? [] : List<BookedService>.from(json["data"]!.map((x) => BookedService.fromJson(x))),
+      bookingsList: json["data"] == null ? [] : List<BookedService>.from(json["data"]!.map((x) => BookedService.fromJson(x))).reversed.toList(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    "data": bookingsList.map((x) => x.toJson()).toList(),
+    "data": bookingsList.map((x) => x.toJson()).toList().reversed.toList(),
   };
 
 }

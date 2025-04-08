@@ -1,15 +1,27 @@
 import 'package:intl/intl.dart';
 
 class CartItemsList {
+
   CartItemsList({
     required this.data,
-  });
+  }){
+    _cartItems = data;
+    itemQty = {};
+    cartIdByServiceId = {};
+    for (var cartItem in data) {
+      itemQty.putIfAbsent(cartItem.serviceId.toInt(), () => cartItem.qty);
+      cartIdByServiceId.putIfAbsent(cartItem.serviceId.toInt(), () => cartItem.id);
+    }
+  }
 
   final List<CartItems> data;
-
+  static List<CartItems> _cartItems = [];
+  static List<CartItems> get globalCartItems => _cartItems;
+  static Map<int,dynamic> itemQty = {};
+  static Map<int,dynamic> cartIdByServiceId = {};
   factory CartItemsList.fromJson(Map<String, dynamic> json){
     return CartItemsList(
-      data: json["data"] == null ? [] : List<CartItems>.from(json["data"]!.map((x) => CartItems.fromJson(x))),
+      data: json["data"] == null ? [] : List<CartItems>.from(json["data"]!.map((x) => CartItems.fromJson(x))).reversed.toList(),
     );
   }
 
