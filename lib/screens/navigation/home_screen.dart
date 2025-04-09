@@ -6,7 +6,7 @@ import 'package:cleaning_service/models/global_keys.dart';
 import 'package:cleaning_service/models/shipping_address.dart';
 import 'package:cleaning_service/screens/service_details/all_service_list_screen.dart';
 import 'package:cleaning_service/screens/cart/cart_screen.dart';
-import 'package:cleaning_service/screens/search_screen.dart';
+import 'package:cleaning_service/screens/search/search_screen.dart';
 import 'package:cleaning_service/screens/service_details/service_details_screen.dart';
 import 'package:cleaning_service/screens/service_details/service_options.dart';
 import 'package:cleaning_service/utilities/const.dart';
@@ -1161,7 +1161,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
             ElevatedButton.icon(
               onPressed: (){
                 setState(() {
-
+                  _categories = _fetchHomeScreenData();
                 });
               }, // Calls the retry function
               icon: Icon(Icons.refresh),
