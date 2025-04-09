@@ -2,7 +2,7 @@ import 'package:cleaning_service/models/cart_items.dart';
 import 'package:cleaning_service/models/categories_service.dart';
 import 'package:cleaning_service/models/global_keys.dart';
 import 'package:flutter/material.dart';
-import '../payment_and_address/payment_and_address_screen.dart';
+import '../payments_and_address/payment_and_address_screen.dart';
 import '../../utilities/add_to_cart.dart';
 import '../../utilities/remove_cart_item.dart';
 import '../../widgets/counter_button.dart';

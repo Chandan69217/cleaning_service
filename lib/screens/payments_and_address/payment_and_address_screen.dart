@@ -279,7 +279,7 @@ class AddressBottomSheet extends StatefulWidget {
 class _AddressBottomSheetState extends State<AddressBottomSheet> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  bool _showNewAddressForm = false; // 👈 Toggle variable
+  bool _showNewAddressForm = false;
   String name = '', phone = '', email = '', street = '', address = '',
       state = '', city = '', pincode = '', country = '';
 
@@ -403,7 +403,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
                           ),
                         ],
                       ),
-                      // 👇 New address fields section toggled by _showNewAddressForm
+
                       Visibility(
                         visible: _showNewAddressForm,
                         child: Column(

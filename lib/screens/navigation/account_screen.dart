@@ -8,7 +8,7 @@ import 'package:cleaning_service/screens/navigation/bookings_screen.dart';
 import 'package:cleaning_service/screens/notification_and_support/notification_screen.dart';
 import 'package:cleaning_service/screens/settings/privacy_and_security_screen.dart';
 import 'package:cleaning_service/screens/settings/theme_screen.dart';
-import 'package:cleaning_service/screens/payment_and_address/wallet_screen.dart';
+import 'package:cleaning_service/screens/payments_and_address/wallet_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
 import 'package:flutter/material.dart';
@@ -516,8 +516,8 @@ class SkippedAccountScreen extends StatelessWidget {
 
 
 class ProfileScreen extends StatelessWidget {
-  final String name = "John Doe";
-  final String email = "john.doe@example.com";
+  final String name = "Chandan Sharma";
+  final String email = "chandansharma69217@gmail.com";
   final String phone = "+91 9876543210";
 
   @override
@@ -623,8 +623,8 @@ class EditProfileForm extends StatefulWidget {
 
 class _EditProfileFormState extends State<EditProfileForm> {
   final _formKey = GlobalKey<FormState>();
-  String name = "John Doe";
-  String email = "john.doe@example.com";
+  String name = "Chandan Sharma";
+  String email = "Chandansharma69217@gmail.com";
   String phone = "9876543210";
 
   @override

@@ -4,6 +4,7 @@ import 'package:cleaning_service/screens/navigation/account_screen.dart';
 import 'package:cleaning_service/screens/navigation/bookings_screen.dart';
 import 'package:cleaning_service/screens/navigation/home_screen.dart';
 import 'package:cleaning_service/screens/navigation/reward_screen.dart';
+import 'package:cleaning_service/utilities/check_token_validity.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,9 +23,12 @@ class DashboardState extends State<Dashboard> {
   late bool _isLoggedIn;
   final List<Widget> _screens = [LoggedInHomeScreen(key:Keys.homeScreenKey,),BookingsScreen(key: Keys.bookingScreenKey,),RewardsScreen(),AccountScreen()];
   final List<Widget> _skippedScreens = [SkipeedHomeScreen(),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check booking information',),LoggedOutScreen(title: 'Whoops, You are not logged in yet!',message: 'Please login to check your reward information',),SkippedAccountScreen(),];
+
   @override
   void initState() {
     super.initState();
+    CheckTokenValidity(context: context);
+    CheckTokenValidity.startTokenValidationCheck();
     _isLoggedIn = Pref.instance.getBool(Consts.isLogin)??false;
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: [SystemUiOverlay.top,SystemUiOverlay.bottom]);
   }
@@ -79,6 +83,11 @@ class DashboardState extends State<Dashboard> {
                 label: 'Account'),
           ]),
     );
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    CheckTokenValidity.stopTokenValidationCheck();
   }
 }
 

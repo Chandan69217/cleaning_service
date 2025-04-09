@@ -1,6 +1,11 @@
+import 'dart:convert';
+
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
 import 'package:cleaning_service/screens/dashboard.dart';
+import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/widgets/cust_snack_bar.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../models/global_keys.dart';
 import '../../utilities/const.dart';
@@ -22,7 +28,7 @@ class SplashScreen extends StatelessWidget{
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth * 0.08;
     WidgetsBinding.instance.addPostFrameCallback((duration){
-      futureCall(context);
+      _checkLoginStatus(context);
     });
 
     return Scaffold(
@@ -37,9 +43,44 @@ class SplashScreen extends StatelessWidget{
     );
   }
 
-  futureCall(BuildContext context)async{
-    bool isLoggedIn = await Pref.instance.getBool(Consts.isLogin) ?? false;
-    await Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn))),);
+  _checkLoginStatus(BuildContext context)async{
+    bool isLoggedIn = Pref.instance.getBool(Consts.isLogin) ?? false;
+    bool isTokenValid = false;
+    if(isLoggedIn){
+      final appToken = Pref.instance.getString(Consts.token)??'';
+      try {
+        final connectivityResult = await Connectivity().checkConnectivity();
+        if (connectivityResult == ConnectivityResult.none) {
+          isTokenValid = false;
+          showSnackBar(context: context, title: 'No internet connection.', message: 'Check your internet connections and try again',contentType: ContentType.warning);
+          return;
+        }
+
+        final uri = Uri.https(Urls.base_url, Urls.isValidToken, {'appToken': appToken});
+        final response = await get(
+          uri,
+          headers: {'Content-Type': 'application/json'},
+        );
+        final body = json.decode(response.body) as Map;
+        if (response.statusCode == 200) {
+          if(body['status'] == 'success')
+          isTokenValid = true;
+          else{
+            isTokenValid = false;
+            showSnackBar(context: context, title: 'Session Expired', message: 'You have been logged out. Please sign in again to continue.');
+          }
+        } else {
+          isTokenValid = false;
+          showSnackBar(context: context, title: 'Server Error', message: 'Something went wrong on our end. Please try again later.');
+          print("Invalid token or server error.");
+        }
+      } catch (e, trace) {
+        print("Error checking token: $e");
+        print(trace);
+        isTokenValid = false;
+      }
+    }
+    await Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn && isTokenValid))),);
   }
 
   Widget _navigateToNextScreen(bool isLoggedIn) {

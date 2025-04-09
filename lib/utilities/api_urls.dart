@@ -13,5 +13,6 @@ class Urls {
   static const String getBookingList = '/api/Booking/bookingservicelist';
   static const String createBooking = '/api/Booking/createbooking';
   static const String updateCartQty = '/api/Booking/updatecartqty';
+  static const String isValidToken = '/api/Auth/isValidToken';
 }
 

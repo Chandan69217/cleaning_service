@@ -65,8 +65,8 @@ class ShippingAddressList {
 
   static List<ShippingAddress> get addresses => _addresses;
 
-  static Future<void> fetchAddresses() async {
-    if (isInitialized) return;
+  static Future<bool> fetchAddresses() async {
+    if (isInitialized) return false;
 
     try {
       var appToken = Pref.instance.getString(Consts.token);
@@ -83,6 +83,7 @@ class ShippingAddressList {
           var list = jsonData['data'] as List? ?? [];
           _addresses = list.map((e) => ShippingAddress.fromJson(e)).toList();
           isInitialized = true;
+          return true;
         }
       } else {
         throw Exception("Failed to load addresses. Status Code: ${response.statusCode}");
@@ -90,6 +91,7 @@ class ShippingAddressList {
     } catch (error) {
       throw Exception("Error fetching addresses: $error");
     }
+    return false;
   }
 
 }
