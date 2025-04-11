@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cleaning_service/models/booked_service_list.dart';
+import 'package:cleaning_service/screens/booking_track/booking_details_screen.dart';
 import 'package:cleaning_service/screens/service_details/service_options.dart';
 import 'package:cleaning_service/shimmer_effect/category_effect/booking_shimmer_effect.dart';
 import 'package:cleaning_service/utilities/api_urls.dart';
@@ -109,115 +110,120 @@ class BookingsScreenState extends State<BookingsScreen> {
             itemBuilder: (context, index) {
               final booking = bookings[index];
 
-              return Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 2,
-                      offset: const Offset(0, 3),
-                    )
-                  ],
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/icons/image_placeholder.webp',
-                        image: booking.image,
-                        fit: BoxFit.cover,
-                        width: 64,
-                        height: 64,
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/icons/image_placeholder.webp',
-                            fit: BoxFit.cover,
-                            width: 64,
-                            height: 64,
-                          );
-                        },
+              return GestureDetector(
+                onTap: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context)=> BookingDetailsScreen(bookingId: booking.id.toString())));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 2,
+                        offset: const Offset(0, 3),
+                      )
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: FadeInImage.assetNetwork(
+                          placeholder: 'assets/icons/image_placeholder.webp',
+                          image: booking.image,
+                          fit: BoxFit.cover,
+                          width: 64,
+                          height: 64,
+                          imageErrorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              'assets/icons/image_placeholder.webp',
+                              fit: BoxFit.cover,
+                              width: 64,
+                              height: 64,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            booking.serviceName,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'Qty: ${booking.qty}  |  ₹${booking.price}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            booking.formatDate ?? 'No Date Available',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              color: Colors.black54,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            _getStatusName(booking.status),
-                            style: TextStyle(
-                              color: _getStatusColor(booking.status),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (_getStatusName(booking.status) == 'upcoming') ...[
-                      const SizedBox(width: 8),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => TrackBookingScreen(
-                                service: booking.serviceName,
-                                professionalName: 'Amit Sharma',
-                                status: 'Professional is on the way',
-                                eta: '15 mins',
-                                profileImage: 'assets/pictures/book_a_visit.webp',
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              booking.serviceName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
                               ),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 10,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          textStyle: const TextStyle(fontSize: 12),
-                          elevation: 0,
+                            const SizedBox(height: 6),
+                            Text(
+                              'Qty: ${booking.qty}  |  ₹${booking.price}',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              booking.formatDate ?? 'No Date Available',
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              _getStatusName(booking.status),
+                              style: TextStyle(
+                                color: _getStatusColor(booking.status),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
                         ),
-                        child: const Text('Track'),
                       ),
-                    ]
-                  ],
+                      if (_getStatusName(booking.status) == 'upcoming') ...[
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => TrackBookingScreen(
+                                  service: booking.serviceName,
+                                  professionalName: 'Amit Sharma',
+                                  status: 'Professional is on the way',
+                                  eta: '15 mins',
+                                  profileImage: 'assets/pictures/book_a_visit.webp',
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueAccent,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 10,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            textStyle: const TextStyle(fontSize: 12),
+                            elevation: 0,
+                          ),
+                          child: const Text('Track'),
+                        ),
+                      ]
+                    ],
+                  ),
                 ),
               );
             },

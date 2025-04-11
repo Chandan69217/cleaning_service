@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
@@ -22,6 +21,7 @@ import '../../utilities/cust_colors.dart';
 
 
 class SplashScreen extends StatelessWidget{
+
   @override
   Widget build(BuildContext context) {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
@@ -42,6 +42,7 @@ class SplashScreen extends StatelessWidget{
       ),
     );
   }
+
 
   _checkLoginStatus(BuildContext context)async{
     bool isLoggedIn = Pref.instance.getBool(Consts.isLogin) ?? false;
@@ -82,12 +83,12 @@ class SplashScreen extends StatelessWidget{
     }
     await Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn && isTokenValid))),);
   }
-
   Widget _navigateToNextScreen(bool isLoggedIn) {
     return isLoggedIn
         ? LocationFetchScreen()
         : LoginScreen();
   }
+
 
 }
 
