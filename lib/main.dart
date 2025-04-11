@@ -1,19 +1,35 @@
 import 'package:cleaning_service/screens/splash/splash_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
+import 'package:cleaning_service/utilities/provider/UserProfileProvider.dart';
 import 'package:cleaning_service/utilities/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main()async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarIconBrightness: Brightness.dark,
-      statusBarColor: Colors.transparent));
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,overlays: []);
+    statusBarIconBrightness: Brightness.dark,
+    statusBarColor: Colors.transparent,
+  ));
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
   Pref.instance = await SharedPreferences.getInstance();
-  runApp(const MyApp());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<UserProfileProvider>(
+          create: (context) => UserProfileProvider.instance,
+        ),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

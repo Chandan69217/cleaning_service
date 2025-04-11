@@ -74,16 +74,19 @@ class ShippingAddressList {
       var response = await get(uri, headers: {
         'Content-Type': 'application/json',
       });
-      print(uri.toString());
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> jsonData = json.decode(response.body);
 
         if (jsonData['status'] == "success") {
           var list = jsonData['data'] as List? ?? [];
-          _addresses = list.map((e) => ShippingAddress.fromJson(e)).toList();
-          isInitialized = true;
-          return true;
+          if(list.isNotEmpty){
+            _addresses = list.map((e) => ShippingAddress.fromJson(e)).toList();
+            isInitialized = true;
+            return true;
+          }else{
+            return false;
+          }
         }
       } else {
         throw Exception("Failed to load addresses. Status Code: ${response.statusCode}");

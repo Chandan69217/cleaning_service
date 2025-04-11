@@ -114,108 +114,103 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    return SafeArea(
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
-              child: SizedBox(
-                width: screenWidth * 0.09,
-                height: screenWidth * 0.09,
-                child: IconButton(
-                  iconSize: (screenWidth * 0.09)*0.7,
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    style: IconButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
-                        elevation: 0,
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        )),
-                    icon: Icon(
-                      Icons.close_rounded,
-                    )),
-              ),
-            ),
-            Flexible(
-              fit: FlexFit.loose,
-              child: Container(
-                margin: EdgeInsets.only(bottom: 20.0),
-                width: screenWidth * 0.9,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                  borderRadius: BorderRadius.circular((screenWidth * 0.9)*0.05)
+
+    return Scaffold(
+      resizeToAvoidBottomInset: true,
+      backgroundColor: Colors.transparent,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: 10,
+            top: 10,
+            left: 10,
+            right: 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Close button (always visible)
+              IconButton(
+                iconSize: screenWidth * 0.06,
+                onPressed: () => Navigator.of(context).pop(),
+                style: IconButton.styleFrom(
+                  foregroundColor: Colors.black,
+                  backgroundColor: Colors.white,
+                  shape: CircleBorder(),
                 ),
-                padding: EdgeInsets.all(screenWidth * 0.05),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        fit: FlexFit.loose,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              _buildTextField(
-                                  fullNameController, 'Full Name',),
-                              _buildTextField(emailController, 'Email',
-                                  isEmail: true),
-                              _buildTextField(mobileController, 'Mobile',
-                                  isNumber: true),
-                              _buildTextField(passwordController, 'Password',
-                                  isPassword: true),
-                              _buildTextField(addressController, 'Address',),
-                              _buildTextField(cityController, 'City',),
-                              _buildTextField(stateController, 'State',),
-                              _buildTextField(pincodeController, 'Pincode',
-                                  isNumber: true),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 15.0,),
-                      _isLoading
-                          ? CustLoader()
-                          : SizedBox(
-                        width: screenWidth * 0.8,
-                        child: ElevatedButton(
-                          onPressed: _registerUser,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.indigoAccent,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.zero,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                icon: Icon(Icons.close_rounded),
+              ),
+
+              SizedBox(height: 8.0,),
+              // Container with form
+              Flexible(
+                fit: FlexFit.loose,
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: EdgeInsets.all(screenWidth * 0.05),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        Flexible(
+                          fit: FlexFit.loose,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                _buildTextField(fullNameController, 'Full Name'),
+                                _buildTextField(emailController, 'Email', isEmail: true),
+                                _buildTextField(mobileController, 'Mobile', isNumber: true),
+                                _buildTextField(passwordController, 'Password', isPassword: true),
+                                _buildTextField(addressController, 'Address'),
+                                _buildTextField(cityController, 'City'),
+                                _buildTextField(stateController, 'State'),
+                                _buildTextField(pincodeController, 'Pincode', isNumber: true),
+                              ],
                             ),
                           ),
-                          child: Center(
-                              child: Text(
-                                'Register',
-                                style: TextStyle(
-                                    fontSize: (screenWidth * 0.13) * 0.3),
-                              )),
                         ),
-                      ),
-                    ],
+
+                        SizedBox(height: 10),
+
+                        // Register button (always visible at bottom)
+                        _isLoading
+                            ? CustLoader()
+                            : SizedBox(
+                          width: screenWidth * 0.8,
+                          child: ElevatedButton(
+                            onPressed: _registerUser,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.indigoAccent,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                            child: Text(
+                              'Register',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
+
 
   Widget _buildTextField(
       TextEditingController controller, String labelText,

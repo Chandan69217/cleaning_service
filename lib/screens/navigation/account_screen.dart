@@ -11,8 +11,11 @@ import 'package:cleaning_service/screens/settings/theme_screen.dart';
 import 'package:cleaning_service/screens/payments_and_address/wallet_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
+import 'package:cleaning_service/utilities/provider/UserProfileProvider.dart';
+import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({super.key});
@@ -23,6 +26,7 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   String? mobileNo;
+  Map<String,String> _userData = {};
   @override
   void initState() {
     super.initState();
@@ -30,138 +34,11 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   void init() async {
+    UserProfileProvider.instance.getUserDetails();
     mobileNo = Pref.instance.getString(Consts.mobileNo);
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   double screenWidth = MediaQuery.of(context).size.width;
-  //   double screenHeight = MediaQuery.of(context).size.height;
-  //
-  //   return Scaffold(
-  //     backgroundColor: CustColors.white,
-  //     appBar: AppBar(
-  //       backgroundColor: Colors.white,
-  //       elevation: 0,
-  //       title: Padding(
-  //         padding: EdgeInsets.only(left: 8.0),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             Text(
-  //               'Verified Customer',
-  //               style: TextStyle(
-  //                 color: Colors.black,
-  //                 fontWeight: FontWeight.w500,
-  //                 fontSize: screenWidth * 0.05,
-  //               ),
-  //             ),
-  //             Text(
-  //               mobileNo != null ? '+91 $mobileNo' : 'N/A',
-  //               style: TextStyle(fontSize: screenWidth * 0.04, color: Colors.grey),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       actions: [
-  //         IconButton(
-  //           icon: Icon(Icons.edit, color: Colors.black,size: screenWidth * 0.052,),
-  //           onPressed: () {},
-  //         ),
-  //       ],
-  //     ),
-  //     body: SingleChildScrollView(
-  //       child: Column(
-  //         children: [
-  //           Container(
-  //             color: Colors.white,
-  //             padding: EdgeInsets.all(screenWidth * 0.05,),
-  //             child: GridView.count(
-  //               crossAxisCount: 3,
-  //               physics: NeverScrollableScrollPhysics(),
-  //               shrinkWrap: true,
-  //               crossAxisSpacing: screenWidth * 0.02,
-  //               mainAxisSpacing: screenHeight * 0.02,
-  //               children: [
-  //                 _buildCard(onTap: (){
-  //                   Navigator.of(context).push(MaterialPageRoute(builder: (context)=>BookingsScreen()));
-  //                 },Icons.content_paste, 'My bookings',screenWidth),
-  //                 _buildCard(Icons.devices, 'Native devices',screenWidth),
-  //                 _buildCard(Icons.headset, 'Help & support',screenWidth),
-  //               ],
-  //             ),
-  //           ),
-  //           SizedBox(height: screenHeight * 0.01),
-  //           Container(
-  //             padding: EdgeInsets.symmetric(horizontal: 20.0),
-  //             color: Colors.white,
-  //             child: Column(
-  //               children: [
-  //                 ListView(
-  //                   physics: NeverScrollableScrollPhysics(),
-  //                   shrinkWrap: true,
-  //                   children: [
-  //                     // _buildListItem(Icons.description, 'My Plans',screenWidth),
-  //                     _buildListItem(Icons.account_balance_wallet, 'Wallet',screenWidth),
-  //                     // _buildListItem(Icons.account_balance, 'Plus membership',screenWidth),
-  //                     // _buildListItem(Icons.star, 'My rating',screenWidth),
-  //                     _buildListItem(Icons.location_on, 'Manage addresses',screenWidth),
-  //                     _buildListItem(Icons.credit_card, 'Manage payment methods',screenWidth),
-  //                     _buildListItem(Icons.settings, 'Settings',screenWidth),
-  //                     _buildListItem(Icons.info, 'About UC',screenWidth),
-  //                   ],
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //           SizedBox(height: screenHeight * 0.01),
-  //           Container(
-  //             color: Colors.white,
-  //             child: Column(
-  //               mainAxisAlignment: MainAxisAlignment.end,
-  //               mainAxisSize: MainAxisSize.max,
-  //               children: [
-  //                 SizedBox(height: screenHeight * 0.04),
-  //                 SizedBox(
-  //                   width: double.infinity,
-  //                   height: screenWidth * 0.11,
-  //                   child: ElevatedButton(
-  //                     onPressed: () {
-  //                       Pref.instance.clear();
-  //                       Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context)=>LoginScreen()),(route)=> false);
-  //                     },
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor: Colors.white,
-  //                       foregroundColor: Color(0xFFD32F2F),
-  //                       side: BorderSide(color: Color(0xFFD32F2F)),
-  //                       padding: EdgeInsets.zero,
-  //                       shape: RoundedRectangleBorder(
-  //                         borderRadius: BorderRadius.circular(5),
-  //                       ),
-  //                     ),
-  //                     child: FittedBox(
-  //                       child: Text(
-  //                         'Logout',
-  //                         style: TextStyle(color: Color(0xFFD32F2F), fontSize: (screenWidth * 0.11)*0.4),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
-  //                 // Footer
-  //                 SizedBox(height: screenHeight * 0.04),
-  //                 Text(
-  //                   'Version 7.5.91 R455',
-  //                   style: TextStyle(color: Colors.grey, fontSize: screenWidth * 0.033),
-  //                 ),
-  //                 SizedBox(height: screenHeight * 0.01),
-  //               ],
-  //             ),
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -173,37 +50,67 @@ class _AccountScreenState extends State<AccountScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Padding(
-          padding: EdgeInsets.only(left: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Verified Customer',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w500,
-                  fontSize: screenWidth * 0.05,
-                ),
+        title: Consumer<UserProfileProvider>(
+          builder: (context, provider, child) {
+            _userData = {
+              "id": "${provider.userDetails.id}",
+              "FullName": "${provider.userDetails.fullName}",
+              "Email": "${provider.userDetails.email}",
+              "Address": "${provider.userDetails.address}",
+              "City": "${provider.userDetails.city}",
+              "State": "${provider.userDetails.state}",
+              "Pincode": "${provider.userDetails.pincode}",
+              "ProfileImageURL": "${provider.userDetails.profileImageUrl}",
+              "Sts": "${provider.userDetails.sts}"
+            };
+            return SafeArea(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: screenWidth * 0.064,
+                    backgroundColor: Colors.purple[100],
+                    child: Icon(Icons.person, color: Colors.purple[700], size: screenWidth * 0.08),
+                  ),
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          provider.userDetails.fullName,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                            fontSize: screenWidth * 0.05,
+                          ),
+                        ),
+                        Text(
+                          '+91 ${provider.userDetails.mobile}',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                mobileNo != null ? '+91 $mobileNo' : 'N/A',
-                style:
-                    TextStyle(fontSize: screenWidth * 0.04, color: Colors.grey),
-              ),
-            ],
-          ),
+            );
+          },
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit,
-                color: Colors.black, size: screenWidth * 0.052),
+            icon: Icon(Icons.edit, color: Colors.black, size: screenWidth * 0.052),
             onPressed: () {
-              _showEditProfileSheet(context);
+              _showEditProfileSheet(context,_userData);
             },
           ),
         ],
       ),
+
       body: Column(
         children: [
           Container(
@@ -515,11 +422,18 @@ class SkippedAccountScreen extends StatelessWidget {
 
 
 
-class ProfileScreen extends StatelessWidget {
-  final String name = "Chandan Sharma";
-  final String email = "chandansharma69217@gmail.com";
-  final String phone = "+91 9876543210";
+class ProfileScreen extends StatefulWidget {
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
 
+class _ProfileScreenState extends State<ProfileScreen> {
+  Map<String,String> _userData={};
+  @override
+  void initState() {
+    // UserProfileProvider.instance.getUserDetails();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -537,7 +451,7 @@ class ProfileScreen extends StatelessWidget {
           _buildProfileHeader(screenWidth),
           Divider(thickness: 1, height: 32),
           _buildListTile(Icons.edit, "Edit Profile", () {
-            _showEditProfileSheet(context);
+            _showEditProfileSheet(context,_userData);
           }),
           // _buildListTile(Icons.security_outlined, "Two-Factor Authentication", () {}),
           _buildListTile(Icons.delete_outline, "Delete Account", () {
@@ -550,31 +464,44 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _buildProfileHeader(double screenWidth) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: screenWidth * 0.1,
-            backgroundColor: Colors.purple[100],
-            child: Icon(Icons.person, color: Colors.purple[700], size: screenWidth * 0.1),
-          ),
-          SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-                SizedBox(height: 4),
-                Text(email, style: TextStyle(color: Colors.grey[700])),
-                Text(phone, style: TextStyle(color: Colors.grey[700])),
-              ],
+    return Consumer<UserProfileProvider>(builder: (context,provider,child){
+      _userData = {
+        "id": "${provider.userDetails.id}",
+        "FullName": "${provider.userDetails.fullName}",
+        "Email": "${provider.userDetails.email}",
+        "Address": "${provider.userDetails.address}",
+        "City": "${provider.userDetails.city}",
+        "State": "${provider.userDetails.state}",
+        "Pincode": "${provider.userDetails.pincode}",
+        "ProfileImageURL": "${provider.userDetails.profileImageUrl}",
+        "Sts": "${provider.userDetails.sts}"
+      };
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: screenWidth * 0.1,
+              backgroundColor: Colors.purple[100],
+              child: Icon(Icons.person, color: Colors.purple[700], size: screenWidth * 0.1),
             ),
-          ),
-        ],
-      ),
-    );
+            SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(provider.userDetails.fullName,
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                  SizedBox(height: 4),
+                  Text(provider.userDetails.email, style: TextStyle(color: Colors.grey[700])),
+                  Text("+91 ${provider.userDetails.mobile}", style: TextStyle(color: Colors.grey[700])),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   Widget _buildListTile(IconData icon, String title, VoidCallback onTap) {
@@ -594,7 +521,7 @@ class ProfileScreen extends StatelessWidget {
 
 
 
-void _showEditProfileSheet(BuildContext context) {
+void _showEditProfileSheet(BuildContext context,Map<String,String> userProfileData) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -609,7 +536,7 @@ void _showEditProfileSheet(BuildContext context) {
           left: 20,
           right: 20,
         ),
-        child: EditProfileForm(),
+        child: EditProfileForm(userProfileData: userProfileData,),
       );
     },
   );
@@ -617,18 +544,19 @@ void _showEditProfileSheet(BuildContext context) {
 
 
 class EditProfileForm extends StatefulWidget {
+  final Map<String,String> userProfileData;
+  EditProfileForm({required this.userProfileData});
   @override
   _EditProfileFormState createState() => _EditProfileFormState();
 }
 
 class _EditProfileFormState extends State<EditProfileForm> {
   final _formKey = GlobalKey<FormState>();
-  String name = "Chandan Sharma";
-  String email = "Chandansharma69217@gmail.com";
-  String phone = "9876543210";
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
+    var user = widget.userProfileData;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -639,17 +567,27 @@ class _EditProfileFormState extends State<EditProfileForm> {
           key: _formKey,
           child: Column(
             children: [
-              _buildTextField("Name", name, (val) => name = val),
-              _buildTextField("Email", email, (val) => email = val,
+              _buildTextField("Name", user['FullName']!, (val) => user.putIfAbsent('FullName', ()=>val)),
+              _buildTextField("Email", user['Email']!, (val) =>  user.putIfAbsent('Email', ()=>val),
                   keyboardType: TextInputType.emailAddress),
-              _buildTextField("Phone", phone, (val) => phone = val,
-                  keyboardType: TextInputType.phone),
+              _buildTextField("Address", user['Address']!, (val) =>  user.putIfAbsent('Address', ()=>val),),
+              _buildTextField("City", user['City']!, (val) =>  user.putIfAbsent('City', ()=>val),),
+              _buildTextField("State", user['State']!, (val) =>  user.putIfAbsent('State', ()=>val),),
+              _buildTextField("Pincode", user['Pincode']!, (val) =>  user.putIfAbsent('Pincode', ()=>val),),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
+              _isLoading? CustLoader(color: Colors.purple,):ElevatedButton(
+                onPressed: ()async {
                   if (_formKey.currentState!.validate()) {
-                    // Save logic here
-                    Navigator.pop(context);
+                    setState(() {
+                      _isLoading = true;
+                    });
+                   var isUpdated =  await UserProfileProvider.instance.updateUserProfile(user);
+                   if(isUpdated){
+                     Navigator.pop(context);
+                   }
+                   setState(() {
+                     _isLoading = false;
+                   });
                   }
                 },
                 style: ElevatedButton.styleFrom(
