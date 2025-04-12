@@ -342,10 +342,12 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
   bool _isAdd = false;
   int _itemQuantity = 0;
   bool _isLoading = false;
+  late Future<Map<String,dynamic>>? _getService;
 
   @override
   void initState() {
     super.initState();
+    _getService = _getServiceById();
   }
 
 
@@ -400,7 +402,7 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
       appBar: AppBar(
         title: Text('Service Details'),
       ),
-      body: FutureBuilder(future: _getServiceById(), builder: (context,snapshot){
+      body: FutureBuilder(future: _getService, builder: (context,snapshot){
         if(snapshot.connectionState == ConnectionState.waiting){
           return Center(child: SizedBox.square(dimension:25.0,child: CircularProgressIndicator()),);
         }
