@@ -48,7 +48,7 @@ class CartScreenProvider with ChangeNotifier{
       if (response.statusCode == 200 && data['status'] == 'success') {
         _showSnackbar(
             context, "Item added to your cart successfully!", Colors.green);
-        getCartItems();
+        await getCartItems();
         return true;
       } else if (response.statusCode == 400) {
         _showSnackbar(context, "Invalid request! Please check the item details.",
@@ -142,12 +142,11 @@ class CartScreenProvider with ChangeNotifier{
         uri,
         headers: {"Content-Type": "application/json"},
       );
-
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         var status = data['status'] == 'success';
         if(status){
-          getCartItems();
+         await getCartItems();
         }
         return status;
       }
@@ -184,7 +183,7 @@ class CartScreenProvider with ChangeNotifier{
         final data = jsonDecode(response.body);
         var status = data['status'] == 'success';
         if(status){
-          getCartItems();
+          await getCartItems();
         }
         return status;
       } else {

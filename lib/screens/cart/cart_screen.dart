@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:cleaning_service/models/cart_items.dart';
 import 'package:cleaning_service/models/categories_service.dart';
 import 'package:cleaning_service/models/global_keys.dart';
+import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
+import 'package:cleaning_service/utilities/check_token_validity.dart';
+import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/provider.dart';
 import '../payments_and_address/payment_and_address_screen.dart';
 import '../../widgets/counter_button.dart';
@@ -96,7 +103,7 @@ class _EmptyCartScreen extends StatelessWidget {
 
 
 class CartScreen extends StatefulWidget {
-  CartScreen();
+  const CartScreen({super.key});
 
   @override
   State<CartScreen> createState() => _CartScreenState();
@@ -104,29 +111,14 @@ class CartScreen extends StatefulWidget {
 
 class _CartScreenState extends State<CartScreen> {
 
-  // List<CartItems> _cartItems = [];
+  late Future<CartItemsList?> _cartItemsList;
   Set<int> _deletingItemIds = {};
 
   @override
   void initState() {
     super.initState();
+    _cartItemsList = CartScreenProvider.instance.getCartItems();
   }
-
-  // init() async {
-  //   if (CartItemsList.globalCartItems.isNotEmpty) {
-  //     _totalAmount = _calculateTotalAmount(CartItemsList.globalCartItems);
-  //   }
-  // }
-
-  // init() async {
-  //   _cartItems = List.from(CartItemsList.globalCartItems);
-  //   if (_cartItems.isNotEmpty) {
-  //     _totalAmount = _calculateTotalAmount(_cartItems);
-  //   }
-  //   WidgetsBinding.instance.addPostFrameCallback((duration){
-  //     setState(() {});
-  //   });
-  // }
 
 
   @override
@@ -149,7 +141,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
       ),
-      body: FutureBuilder(future: CartScreenProvider.instance.getCartItems(), builder: (context,snapshot){
+      body: FutureBuilder(future:_cartItemsList, builder: (context,snapshot){
         if(snapshot.connectionState == ConnectionState.waiting){
           return Center(child: CircularProgressIndicator(),);
         }
@@ -337,9 +329,9 @@ class _CartScreenState extends State<CartScreen> {
 
 class _CartItemDetailsScreen extends StatefulWidget{
   final CartItems cartItems;
-  Service? service;
+  // Service? service;
   _CartItemDetailsScreen({required this.cartItems}){
-    service = CategoriesServiceModel.getServiceById(cartItems.serviceId.toInt());
+    // service = CategoriesServiceModel.getServiceById(cartItems.serviceId.toInt());
   }
 
   @override
@@ -354,46 +346,93 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    init();
   }
 
-  init() async{
-    WidgetsBinding.instance.addPostFrameCallback((duraction){
-      setState(() {
-        _itemQuantity = CartItemsList.itemQty[widget.service!.id]??0;
-        if(_itemQuantity > 0 ){
-          _isAdd = true;
-        }
+
+
+  Future<Map<String,dynamic>>? _getServiceById() async {
+    // Check Internet Connectivity
+    bool hasInternet = await CheckConnection.isConnected();
+    if (!hasInternet) {
+      return Future.error("No Internet Connection. Please check your network.");
+    }
+
+    try {
+      await CheckTokenValidity.checkTokenValidity();
+      var appToken = Pref.instance.getString(Consts.token);
+      final url = Uri.http(Urls.base_url, Urls.getServiceById, {'appToken': appToken,'id': "${widget.cartItems.serviceId}"
       });
-    });
+      final response = await get(url);
+
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body) as Map;
+        return data['data'];
+      }else if(response.statusCode == 400){
+        return Future.error("Some this went wrong !!.");
+      }
+      else if (response.statusCode == 401) {
+        return Future.error("Session expired. Please log in again.");
+      }
+      else if (response.statusCode == 403) {
+        return Future.error("Access denied. You do not have permission.");
+      }
+      else if (response.statusCode == 404) {
+        return Future.error("Booking service not found.");
+      }
+      else if (response.statusCode == 500) {
+        return Future.error("Server error. Please try again later.");
+      }
+      else {
+        return Future.error("Unexpected error: ${response.statusCode}. Please try again.");
+      }
+    } catch (e) {
+      return Future.error("Something went wrong. Please check your connection and try again.");
+    }
   }
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Service Details'),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildAddProductUI(context),
-              SizedBox(height: screenHeight * 0.01,),
-              _buildShareUI(context),
-              // _buildFQAUI(context),
-              // _buildReviewSlider(context),
-              // _buildReviewList(context),
-            ],
+      body: FutureBuilder(future: _getServiceById(), builder: (context,snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return Center(child: SizedBox.square(dimension:25.0,child: CircularProgressIndicator()),);
+        }
+        if(snapshot.hasError){
+          return Padding(padding:EdgeInsets.symmetric(horizontal: 20.0),child: Center(child: Text(snapshot.error.toString()),));
+        }
+
+        final service = Service.fromJson(snapshot.data!);
+        _itemQuantity = CartItemsList.itemQty[service.id]??0;
+        if(_itemQuantity > 0 ){
+          _isAdd = true;
+        }
+        return SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildAddProductUI(context,service),
+                SizedBox(height: screenHeight * 0.01,),
+                _buildShareUI(context),
+                // _buildFQAUI(context),
+                // _buildReviewSlider(context),
+                // _buildReviewList(context),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 
-  Widget _buildAddProductUI(BuildContext context){
+  Widget _buildAddProductUI(BuildContext context,Service? service){
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Container(
@@ -406,7 +445,7 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
             height: screenHeight * 0.3,
             width: screenWidth,
             placeholder: 'assets/icons/image_placeholder.webp', // Your asset placeholder image
-            image: widget.service!.thumbnailUrl,
+            image: service!.thumbnailUrl,
             fit: BoxFit.cover,
             imageErrorBuilder: (context, error, stackTrace) {
               return Image.asset(
@@ -433,7 +472,7 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                     children: [
                       // Service Info Section
                       Text(
-                        widget.service != null ? widget.service!.serviceName : 'N/A',
+                        service.serviceName,
                         style: TextStyle(
                             fontSize: screenWidth * 0.045,
                             fontWeight: FontWeight.w600,
@@ -480,18 +519,16 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                                     ),
                                   ),
                                   TextSpan(
-                                    text: widget.service != null
-                                        ? '${widget.service!.price}'
-                                        : '0.00',
+                                    text:
+                                        '${service.price}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                   TextSpan(text: '  '),
-                                  if(_hasDiscount(price: widget.service!.price, strikePrice: widget.service!.strikePrice))TextSpan(
-                                    text: widget.service != null
-                                        ? '₹${widget.service!.strikePrice}'
-                                        : '₹0.00',
+                                  if(_hasDiscount(price: service.price, strikePrice: service.strikePrice))TextSpan(
+                                    text:
+                                        '₹${service.strikePrice}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       color: Colors.grey,
@@ -509,7 +546,7 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                             width: screenWidth * 0.02,
                           ),
                           Text(
-                            '• ${widget.service!.duration.toInt()} mins',
+                            '• ${service.duration.toInt()} mins',
                             style: TextStyle(
                                 color: Colors.grey[600],
                                 fontSize: screenWidth * 0.042,
@@ -526,9 +563,9 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                             size: screenWidth * 0.045,
                           ),
                           SizedBox(width: screenWidth * 0.01),
-                          if(_hasDiscount(price: widget.service!.price, strikePrice: widget.service!.strikePrice))
+                          if(_hasDiscount(price: service.price, strikePrice: service.strikePrice))
                             Text(
-                              '${_calculateDiscount(price: widget.service!.price, strikePrice: widget.service!.strikePrice)} off',
+                              '${_calculateDiscount(price: service.price, strikePrice: service.strikePrice)} off',
                               style: TextStyle(
                                   color: Colors.green,
                                   fontSize: screenWidth * 0.04,
@@ -546,7 +583,7 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                   fit: FlexFit.loose,
                   child:  _isAdd?Align(
                     alignment: Alignment.centerRight,
-                    child: CounterButton(service: widget.service!,
+                    child: CounterButton(service: service,
                       initialValue: _itemQuantity,
                       onChanged: (newValue)async{
                         setState(() {
@@ -583,9 +620,9 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                           });
                           _isAdd = await CartScreenProvider.instance.addToCart(
                             context: context,
-                            serviceId: widget.service!.id,
+                            serviceId: service.id,
                             qty: _itemQuantity,
-                            price: widget.service!.price.toDouble(),
+                            price: service.price.toDouble(),
                           );
                           setState(() {
                             _isLoading = false;

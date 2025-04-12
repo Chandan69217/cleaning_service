@@ -1047,21 +1047,11 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
   @override
   void initState() {
     super.initState();
-    // _categories = HomeScreenProvider.instance.fetchHomeScreenData();
     WidgetsBinding.instance.addPostFrameCallback((duration) {
       ShippingAddressList.fetchAddresses();
     });
   }
 
-  // Future<bool> _init() async {
-  //   _cartItems = await getCartItems();
-  //   setState(() {
-  //     if (_cartItems != null) {
-  //       _cartItemsCount = _cartItems!.data.length;
-  //     }
-  //   });
-  //   return true;
-  // }
 
   Widget _buildErrorWidget(String errorMessage) {
     return Center(
@@ -1104,46 +1094,6 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
       ),
     );
   }
-
-
-  // Future<CategoriesServiceModel?> _fetchHomeScreenData() async {
-  //
-  //   bool hasInternet = await CheckConnection.isConnected();
-  //   if (!hasInternet) {
-  //     return Future.error("No Internet Connection. Please check your network.");
-  //   }
-  //
-  //   try {
-  //     var uri = Uri.https(Urls.base_url, Urls.categories);
-  //     var response = await get(uri, headers: {
-  //       'Content-Type': 'application/json',
-  //     });
-  //     print(response.body);
-  //     if (response.statusCode == 200) {
-  //       return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
-  //     } else {
-  //       print(
-  //           'Server error: ${response.statusCode} - ${response.reasonPhrase}');
-  //       return null;
-  //     }
-  //   } on SocketException catch (e) {
-  //     print('No internet connection: $e');
-  //     return Future.error("No Internet Connection. Please check your network.");
-  //   } on HttpException catch (e) {
-  //     print('HTTP Exception: $e');
-  //     return Future.error("Server error. Please try again later.");
-  //   } on FormatException catch (e) {
-  //     return Future.error("Something went wrong!!. Please try again later.");
-  //     return null;
-  //   } catch (e) {
-  //     print('Unexpected error: $e');
-  //     return Future.error("Something went wrong!!. Please try again later.");
-  //   }
-  // }
-
-  // Future<bool> refresh() async {
-  //  return await _init();
-  // }
 
 }
 

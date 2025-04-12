@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:cleaning_service/models/global_keys.dart';
 import 'package:cleaning_service/shimmer_effect/booking_details_shimmer_effect.dart';
 import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
 import 'package:cleaning_service/utilities/check_token_validity.dart';
 import 'package:cleaning_service/utilities/const.dart';
+import 'package:cleaning_service/utilities/provider/booking_screen_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -17,10 +19,6 @@ class BookingDetailsScreen extends StatefulWidget {
   @override
   State<BookingDetailsScreen> createState() => _BookingDetailsScreenState();
 
-  static Future<bool> isConnected() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
-  }
 }
 
 class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
@@ -30,7 +28,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    bookingData = _getBookingDetails();
+    bookingData = _getBookingDetailsById();
   }
 
   @override
@@ -211,9 +209,9 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
   }
 
 
-  Future<Map<String,dynamic>>? _getBookingDetails() async {
+  Future<Map<String,dynamic>>? _getBookingDetailsById() async {
     // Check Internet Connectivity
-    bool hasInternet = await BookingDetailsScreen.isConnected();
+    bool hasInternet = await CheckConnection.isConnected();
     if (!hasInternet) {
       return Future.error("No Internet Connection. Please check your network.");
     }
@@ -256,7 +254,7 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
 
   Future<bool> _cancelBooking() async {
     // Check Internet Connectivity
-    bool hasInternet = await BookingDetailsScreen.isConnected();
+    bool hasInternet = await CheckConnection.isConnected();
     if (!hasInternet) {
       return Future.error("No Internet Connection. Please check your network.");
     }
@@ -276,8 +274,8 @@ class _BookingDetailsScreenState extends State<BookingDetailsScreen> {
         }
         final _isCancel = data['status']=='success';
         if(_isCancel){
-          await Keys.bookingScreenKey.currentState!.refresh();
-          bookingData = _getBookingDetails();
+          BookingScreenProvider.instance.getBookingList();
+          bookingData = _getBookingDetailsById();
         }
         setState(() {
           _isLoading = false;

@@ -1,5 +1,6 @@
 import 'package:cleaning_service/screens/splash/splash_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
+import 'package:cleaning_service/utilities/provider/booking_screen_provider.dart';
 import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:cleaning_service/utilities/provider/home_screen_provider.dart';
 import 'package:cleaning_service/utilities/provider/user_profile_provider.dart';
@@ -30,6 +31,7 @@ void main() async {
         ),
         ChangeNotifierProvider<HomeScreenProvider>(create: (context)=> HomeScreenProvider.instance),
         ChangeNotifierProvider<CartScreenProvider>(create: (context)=> CartScreenProvider.instance),
+        ChangeNotifierProvider<BookingScreenProvider>(create: (context)=> BookingScreenProvider.instance),
       ],
       child: MyApp(),
     ),

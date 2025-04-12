@@ -26,7 +26,7 @@ class UserProfileProvider with ChangeNotifier {
     try {
       await CheckTokenValidity.checkTokenValidity();
       final appToken = Pref.instance.getString(Consts.token);
-      var uri = Uri.https(Urls.base_url, Urls.profielDetails, {
+      var uri = Uri.https(Urls.base_url, Urls.profileDetails, {
         'appToken': appToken,
       });
       var response = await get(uri, headers: {
@@ -53,7 +53,7 @@ class UserProfileProvider with ChangeNotifier {
     }
 
     try {
-      await CheckTokenValidity.checkTokenValidity();
+      CheckTokenValidity.checkTokenValidity();
       final appToken = Pref.instance.getString(Consts.token);
       var uri = Uri.https(Urls.base_url, Urls.editProfile, {
         'appToken': appToken,

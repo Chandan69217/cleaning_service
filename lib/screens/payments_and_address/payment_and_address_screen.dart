@@ -5,6 +5,7 @@ import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/models/global_keys.dart';
 import 'package:cleaning_service/models/shipping_address.dart';
 import 'package:cleaning_service/utilities/const.dart';
+import 'package:cleaning_service/utilities/provider/booking_screen_provider.dart';
 import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -138,9 +139,8 @@ class _PaymentAndAddressScreenState extends State<PaymentAndAddressScreen> {
       });
 
       if(response.statusCode == 200){
-        // Keys.dashboardScreenKey.currentState!.refresh();
         await CartScreenProvider.instance.getCartItems();
-        Keys.bookingScreenKey.currentState!.refresh();
+        await BookingScreenProvider.instance.getBookingList();
         return true;
       }else{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Center(child: Text('Something went wrong !! please retry after sometime'),)));
@@ -281,7 +281,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
   bool _isLoading = false;
   bool _showNewAddressForm = false;
   String name = '', phone = '', email = '', street = '', address = '',
-      state = '', city = '', pincode = '', country = '';
+      state = '', city = '', pincode = '', country = 'Indian';
 
   final List<String> shippingAddresses = ShippingAddressList.addresses
       .map((address) => address.getCompleteDetails())
@@ -414,13 +414,13 @@ class _AddressBottomSheetState extends State<AddressBottomSheet> {
                             _textField("Name", (val) => name = val),
                             _textField("Mobile Number", (val) => phone = val,
                                 keyboard: TextInputType.phone),
-                            _textField("Email Address", (val) => email = val,
+                            _textField("Address", (val) => email = val,
                                 keyboard: TextInputType.emailAddress),
                             _textField("Address", (val) => address = val),
                             _textField("Street / Landmark", (val) => street = val),
                             _textField("City", (val) => city = val),
                             _textField("State", (val) => state = val),
-                            _textField("Country", (val) => country = val),
+                            // _textField("Country", (val) => country = val),
                             _textField("Pincode", (val) => pincode = val,
                                 keyboard: TextInputType.number),
                             const SizedBox(height: 16),

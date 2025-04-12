@@ -1,3 +1,4 @@
+import 'package:cleaning_service/models/user_details.dart';
 import 'package:cleaning_service/screens/settings/about_screen.dart';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
 import 'package:cleaning_service/screens/notification_and_support/help_and_supprot_screen.dart';
@@ -446,36 +447,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.black),
       ),
-      body: ListView(
-        children: [
-          _buildProfileHeader(screenWidth),
-          Divider(thickness: 1, height: 32),
-          _buildListTile(Icons.edit, "Edit Profile", () {
-            _showEditProfileSheet(context,_userData);
-          }),
-          // _buildListTile(Icons.security_outlined, "Two-Factor Authentication", () {}),
-          _buildListTile(Icons.delete_outline, "Delete Account", () {
-            showDeleteAccountSheet(context);
-          }),
+      body: Consumer<UserProfileProvider>(
+        builder: (context,provider,child){
+          _userData = {
+            "id": "${provider.userDetails.id}",
+            "FullName": "${provider.userDetails.fullName}",
+            "Email": "${provider.userDetails.email}",
+            "Address": "${provider.userDetails.address}",
+            "City": "${provider.userDetails.city}",
+            "State": "${provider.userDetails.state}",
+            "Pincode": "${provider.userDetails.pincode}",
+            "ProfileImageURL": "${provider.userDetails.profileImageUrl}",
+            "Sts": "${provider.userDetails.sts}"
+          };
+          return ListView(
+            children: [
+              _buildProfileHeader(provider.userDetails),
+              Divider(thickness: 1, height: 32),
+              _buildListTile(Icons.edit, "Edit Profile", () {
+                _showEditProfileSheet(context,_userData);
+              }),
+              // _buildListTile(Icons.security_outlined, "Two-Factor Authentication", () {}),
+              _buildListTile(Icons.delete_outline, "Delete Account", () {
+                showDeleteAccountSheet(context);
+              }),
 
-        ],
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildProfileHeader(double screenWidth) {
+  Widget _buildProfileHeader(UserDetails userDetails) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Consumer<UserProfileProvider>(builder: (context,provider,child){
-      _userData = {
-        "id": "${provider.userDetails.id}",
-        "FullName": "${provider.userDetails.fullName}",
-        "Email": "${provider.userDetails.email}",
-        "Address": "${provider.userDetails.address}",
-        "City": "${provider.userDetails.city}",
-        "State": "${provider.userDetails.state}",
-        "Pincode": "${provider.userDetails.pincode}",
-        "ProfileImageURL": "${provider.userDetails.profileImageUrl}",
-        "Sts": "${provider.userDetails.sts}"
-      };
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
         child: Row(
@@ -544,8 +550,10 @@ void _showEditProfileSheet(BuildContext context,Map<String,String> userProfileDa
 
 
 class EditProfileForm extends StatefulWidget {
-  final Map<String,String> userProfileData;
+  final Map<String, String> userProfileData;
+
   EditProfileForm({required this.userProfileData});
+
   @override
   _EditProfileFormState createState() => _EditProfileFormState();
 }
@@ -554,55 +562,68 @@ class _EditProfileFormState extends State<EditProfileForm> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
+  late Map<String, String> _formData;
+
+  @override
+  void initState() {
+    super.initState();
+    _formData = Map<String, String>.from(widget.userProfileData);
+  }
+
   @override
   Widget build(BuildContext context) {
-    var user = widget.userProfileData;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text("Edit Profile",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        SizedBox(height: 16),
-        Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTextField("Name", user['FullName']!, (val) => user.putIfAbsent('FullName', ()=>val)),
-              _buildTextField("Email", user['Email']!, (val) =>  user.putIfAbsent('Email', ()=>val),
-                  keyboardType: TextInputType.emailAddress),
-              _buildTextField("Address", user['Address']!, (val) =>  user.putIfAbsent('Address', ()=>val),),
-              _buildTextField("City", user['City']!, (val) =>  user.putIfAbsent('City', ()=>val),),
-              _buildTextField("State", user['State']!, (val) =>  user.putIfAbsent('State', ()=>val),),
-              _buildTextField("Pincode", user['Pincode']!, (val) =>  user.putIfAbsent('Pincode', ()=>val),),
-              SizedBox(height: 20),
-              _isLoading? CustLoader(color: Colors.purple,):ElevatedButton(
-                onPressed: ()async {
-                  if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      _isLoading = true;
-                    });
-                   var isUpdated =  await UserProfileProvider.instance.updateUserProfile(user);
-                   if(isUpdated){
-                     Navigator.pop(context);
-                   }
-                   setState(() {
-                     _isLoading = false;
-                   });
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
-                  minimumSize: Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text("Edit Profile",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          SizedBox(height: 16),
+          Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _buildTextField("Name", _formData['FullName']!, (val) => _formData['FullName'] = val),
+                _buildTextField("Email", _formData['Email']!, (val) => _formData['Email'] = val,
+                    keyboardType: TextInputType.emailAddress),
+                _buildTextField("Address", _formData['Address']!, (val) => _formData['Address'] = val),
+                _buildTextField("City", _formData['City']!, (val) => _formData['City'] = val),
+                _buildTextField("State", _formData['State']!, (val) => _formData['State'] = val),
+                _buildTextField("Pincode", _formData['Pincode']!, (val) => _formData['Pincode'] = val),
+                SizedBox(height: 20),
+                _isLoading
+                    ? CustLoader(color: Colors.purple)
+                    : ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      setState(() {
+                        _isLoading = true;
+                      });
+      
+                      bool isUpdated = await UserProfileProvider.instance.updateUserProfile(_formData);
+                      if (isUpdated) {
+                        Navigator.pop(context);
+                      }
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    minimumSize: Size(double.infinity, 48),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: Text("Save", style: TextStyle(color: Colors.white)),
                 ),
-                child: Text("Save", style: TextStyle(color: Colors.white)),
-              ),
-              SizedBox(height: 16),
-            ],
+                SizedBox(height: 16),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -617,13 +638,13 @@ class _EditProfileFormState extends State<EditProfileForm> {
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
-        validator: (val) =>
-        val == null || val.trim().isEmpty ? 'Required' : null,
+        validator: (val) => val == null || val.trim().isEmpty ? 'Required' : null,
         onChanged: onChanged,
       ),
     );
   }
 }
+
 
 
 void showDeleteAccountSheet(BuildContext context) {
@@ -742,9 +763,7 @@ class _DeleteAccountSheetState extends State<DeleteAccountSheet> {
     await Future.delayed(const Duration(seconds: 2));
 
     setState(() => _isLoading = false);
-
     Navigator.pop(context);
-    // Navigate to login or home screen
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(builder: (context) => const LoginScreen()),
           (route) => false,
@@ -754,4 +773,6 @@ class _DeleteAccountSheetState extends State<DeleteAccountSheet> {
       const SnackBar(content: Text("Account deleted successfully")),
     );
   }
+
+
 }

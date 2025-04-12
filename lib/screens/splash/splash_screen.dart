@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
 import 'package:cleaning_service/screens/dashboard.dart';
 import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
 import 'package:cleaning_service/widgets/cust_snack_bar.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
@@ -20,41 +22,65 @@ import '../../utilities/cust_colors.dart';
 
 
 
-class SplashScreen extends StatelessWidget{
+class SplashScreen extends StatefulWidget{
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
 
+class _SplashScreenState extends State<SplashScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((duration){
+      _checkLoginStatus(context);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     // SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
     double screenWidth = MediaQuery.of(context).size.width;
     double fontSize = screenWidth * 0.08;
-    WidgetsBinding.instance.addPostFrameCallback((duration){
-      _checkLoginStatus(context);
-    });
-
     return Scaffold(
       backgroundColor: CustColors.primary,
-      body: Center(
-        child: Text('Cleaning Service',style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-          color: CustColors.white,
-          fontSize: fontSize,
-          fontWeight: FontWeight.bold,
-        ),),
+      body: FutureBuilder(
+        future: _checkLoginStatus(context),
+        builder:(context,snapshot){
+          if(snapshot.hasError){
+            return Center(child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(snapshot.error.toString(),textAlign: TextAlign.center,style: TextStyle(color: Colors.white),),
+                SizedBox(height: 8.0,),
+                ElevatedButton(onPressed: (){
+                  _checkLoginStatus(context);
+                }, child: Text('Try Again')),
+              ],
+            ),);
+          }
+          return Center(
+            child: Text('Cleaning Service',style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color: CustColors.white,
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+            ),),
+          );
+        }
       ),
     );
   }
 
 
-  _checkLoginStatus(BuildContext context)async{
+  Future<void> _checkLoginStatus(BuildContext context)async{
     bool isLoggedIn = Pref.instance.getBool(Consts.isLogin) ?? false;
     bool isTokenValid = false;
     if(isLoggedIn){
       final appToken = Pref.instance.getString(Consts.token)??'';
       try {
-        final connectivityResult = await Connectivity().checkConnectivity();
-        if (connectivityResult == ConnectivityResult.none) {
-          isTokenValid = false;
+        if (!await CheckConnection.isConnected()) {
           showSnackBar(context: context, title: 'No internet connection.', message: 'Check your internet connections and try again',contentType: ContentType.warning);
-          return;
+          return Future.error('No Internet Connection !!\n please connect to internet and try again');
         }
 
         final uri = Uri.https(Urls.base_url, Urls.isValidToken, {'appToken': appToken});
@@ -81,15 +107,14 @@ class SplashScreen extends StatelessWidget{
         isTokenValid = false;
       }
     }
-    await Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn && isTokenValid))),);
+    Future.delayed(const Duration(seconds: 1),() => Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=> _navigateToNextScreen(isLoggedIn && isTokenValid))),);
   }
+
   Widget _navigateToNextScreen(bool isLoggedIn) {
     return isLoggedIn
         ? LocationFetchScreen()
         : LoginScreen();
   }
-
-
 }
 
 
@@ -112,12 +137,42 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
     try {
       serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
+       await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Enable Location Services'),
+            content: Text('Location services are disabled. Would you like to enable?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('No'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Geolocator.openLocationSettings();
+                },
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        );
         if (mounted) {
           setState(() {
             locationMessage = "Location services are disabled.";
             isFetchingLocation = false;
           });
         }
+        Future.delayed(Duration(milliseconds: 800), () {
+          if (mounted) {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (_) => Dashboard(key: Keys.dashboardScreenKey),
+              ),(route)=> false
+            );
+          }
+        });
         return;
       }
 
@@ -132,6 +187,16 @@ class _LocationFetchScreenState extends State<LocationFetchScreen> {
               isFetchingLocation = false;
             });
           }
+          Future.delayed(Duration(milliseconds: 800), () {
+            if (mounted) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => Dashboard(key: Keys.dashboardScreenKey),
+                ),
+              );
+            }
+          });
           return;
         }
       }

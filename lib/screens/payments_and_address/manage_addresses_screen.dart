@@ -157,7 +157,7 @@ class _AddAddressState extends State<AddAddress> {
         (index) => TextEditingController(),
   );
   String name = '', phone = '', email = '', street = '', address = '',
-      state = '', city = '', pincode = '', country = '';
+      state = '', city = '', pincode = '', country = 'India';
 
 
   @override
@@ -238,7 +238,7 @@ class _AddAddressState extends State<AddAddress> {
                             _textField("Street / Landmark", (val) => street = val,controller: _controllers[4]),
                             _textField("City", (val) => city = val,controller: _controllers[5]),
                             _textField("State", (val) => state = val,controller: _controllers[6]),
-                            _textField("Country", (val) => country = val,controller: _controllers[7]),
+                            // _textField("Country", (val) => country = val,controller: _controllers[7]),
                             _textField("Pincode", (val) => pincode = val,
                                 keyboard: TextInputType.number,controller: _controllers[8]),
                             const SizedBox(height: 16),

@@ -32,6 +32,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
@@ -166,6 +167,7 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
                                 _buildTextField(emailController, 'Email', isEmail: true),
                                 _buildTextField(mobileController, 'Mobile', isNumber: true),
                                 _buildTextField(passwordController, 'Password', isPassword: true),
+                                _buildTextField(confirmPasswordController, 'Confirm Password', isPassword: true),
                                 _buildTextField(addressController, 'Address'),
                                 _buildTextField(cityController, 'City'),
                                 _buildTextField(stateController, 'State'),
@@ -217,26 +219,34 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
       {bool isEmail = false, bool isPassword = false, bool isNumber = false}) {
     double screenWidth = MediaQuery.of(context).size.width * 0.9;
     double textFieldHeight = screenWidth * 0.15;
+    bool _isObsureText = isPassword;
     return Padding(
       padding:
           EdgeInsets.symmetric(vertical: 8.0,),
       child: SizedBox(
         height: textFieldHeight,
-        child: TextFormField(
+        child: StatefulBuilder(builder: (context,refresh)=> TextFormField(
           controller: controller,
           cursorColor: Colors.black,
+          maxLength: isNumber?10:null,
           keyboardType: isNumber
               ? TextInputType.number
               : (isEmail ? TextInputType.emailAddress : TextInputType.text),
-          obscureText: isPassword,
+          obscureText: _isObsureText,
           style: TextStyle(fontSize: textFieldHeight * 0.35,fontWeight: FontWeight.normal),
           decoration: InputDecoration(
             labelText: labelText,
+            counterText: '',
+            suffixIcon: isPassword ? IconButton(onPressed: (){
+              refresh((){
+                _isObsureText = !_isObsureText;
+              });
+            }, icon: Icon(_isObsureText?Icons.visibility_off:Icons.visibility)):null,
             border: OutlineInputBorder(),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                color: Colors.black
-              )
+                borderSide: BorderSide(
+                  color: Colors.black,
+                )
             ),
             labelStyle: TextStyle(fontSize: textFieldHeight * 0.35,fontWeight: FontWeight.w500,color: Colors.black),
             contentPadding: EdgeInsets.symmetric(
@@ -248,10 +258,12 @@ class _RegistrationDialogState extends State<RegistrationDialog> {
             }
             return null;
           },
-        ),
+        ),)
       ),
     );
   }
+
+
 }
 
 // Expanded(

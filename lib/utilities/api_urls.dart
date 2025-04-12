@@ -16,7 +16,8 @@ class Urls {
   static const String createBooking = '/api/Booking/createbooking';
   static const String updateCartQty = '/api/Booking/updatecartqty';
   static const String isValidToken = '/api/Auth/isValidToken';
-  static const String profielDetails = '/api/Users/profiledetails';
+  static const String profileDetails = '/api/Users/profiledetails';
   static const String editProfile = '/api/Users/editprofile';
+  static const String getServiceById = '/api/Service/servicebyid';
 }
 
