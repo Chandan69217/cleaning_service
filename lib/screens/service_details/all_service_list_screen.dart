@@ -1,13 +1,12 @@
-import 'dart:math';
 import 'package:cleaning_service/models/cart_items.dart';
 import 'package:cleaning_service/screens/cart/cart_screen.dart';
 import 'package:cleaning_service/screens/service_details/service_details_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
+import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:cleaning_service/widgets/counter_button.dart';
 import 'package:flutter/material.dart';
 import '../../models/categories_service.dart';
 import '../../models/global_keys.dart';
-import '../../utilities/add_to_cart.dart';
 import '../../utilities/cust_colors.dart';
 
 
@@ -221,18 +220,6 @@ class _AllServicesListScreenState extends State<AllServicesListScreen> {
               List<String> categoryNames = category.services.map((service){
                 return service.serviceName;
               }).toList();
-              // final List<String> imageUrls = [
-              //   'assets/pictures/bath_fitting.webp',
-              //   'assets/pictures/basin_sink.webp',
-              //   'assets/pictures/grouting.webp',
-              //   'assets/pictures/water_filter.webp',
-              //   'assets/pictures/drainge.webp',
-              //   'assets/pictures/toilet.webp',
-              //   'assets/pictures/Tap_Mixer.webp',
-              //   'assets/pictures/water_tank.webp',
-              //   'assets/pictures/water_pipe.webp',
-              //   'assets/pictures/book_a_visit.webp'
-              // ];
 
               return GestureDetector(
                 onTap: (){
@@ -489,7 +476,7 @@ class _AllServicesListScreenState extends State<AllServicesListScreen> {
                                 refresh(() {
                                   _isLoading = true;
                                 });
-                                var _isAdd = await addToCart(
+                                var _isAdd = await CartScreenProvider.instance.addToCart(
                                   context: context,
                                   serviceId: service.id,
                                   qty: 1,
@@ -511,7 +498,6 @@ class _AllServicesListScreenState extends State<AllServicesListScreen> {
                                       'Price': service.price
                                     },
                                   );
-                                  Keys.homeScreenKey.currentState!.refresh();
                                   _calculateTotalAmount();
                                 }
                                 setState(() {

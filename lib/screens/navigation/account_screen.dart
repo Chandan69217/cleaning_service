@@ -11,7 +11,7 @@ import 'package:cleaning_service/screens/settings/theme_screen.dart';
 import 'package:cleaning_service/screens/payments_and_address/wallet_screen.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
-import 'package:cleaning_service/utilities/provider/UserProfileProvider.dart';
+import 'package:cleaning_service/utilities/provider/user_profile_provider.dart';
 import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

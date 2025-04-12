@@ -1,10 +1,10 @@
 import 'package:cleaning_service/models/cart_items.dart';
 import 'package:cleaning_service/models/categories_service.dart';
 import 'package:cleaning_service/models/global_keys.dart';
+import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../payments_and_address/payment_and_address_screen.dart';
-import '../../utilities/add_to_cart.dart';
-import '../../utilities/remove_cart_item.dart';
 import '../../widgets/counter_button.dart';
 
 
@@ -103,14 +103,13 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  double? _totalAmount;
-  List<CartItems> _cartItems = [];
+
+  // List<CartItems> _cartItems = [];
   Set<int> _deletingItemIds = {};
 
   @override
   void initState() {
     super.initState();
-    init();
   }
 
   // init() async {
@@ -119,15 +118,15 @@ class _CartScreenState extends State<CartScreen> {
   //   }
   // }
 
-  init() async {
-    _cartItems = List.from(CartItemsList.globalCartItems);
-    if (_cartItems.isNotEmpty) {
-      _totalAmount = _calculateTotalAmount(_cartItems);
-    }
-    WidgetsBinding.instance.addPostFrameCallback((duration){
-      setState(() {});
-    });
-  }
+  // init() async {
+  //   _cartItems = List.from(CartItemsList.globalCartItems);
+  //   if (_cartItems.isNotEmpty) {
+  //     _totalAmount = _calculateTotalAmount(_cartItems);
+  //   }
+  //   WidgetsBinding.instance.addPostFrameCallback((duration){
+  //     setState(() {});
+  //   });
+  // }
 
 
   @override
@@ -150,159 +149,159 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
       ),
-      body: (_cartItems.isEmpty)
-          // ? Center(child: Text("Your cart is empty"))
-        ?_EmptyCartScreen()
-          : Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(screenWidth * 0.04),
-              itemCount: _cartItems.length,
-              itemBuilder: (context, index) {
-                final item = _cartItems[index];
-                return Container(
-                  margin: EdgeInsets.only(bottom: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade200,
-                        blurRadius: 6,
-                        spreadRadius: 2,
-                        offset: Offset(0, 3),
-                      )
-                    ],
-                  ),
-                  child: ListTile(
-                    onTap: (){
-                      Navigator.of(context).push(MaterialPageRoute(builder: (context)=> _CartItemDetailsScreen(cartItems: item,onUpdate:(){
-                       setState(() {
-                         _cartItems = CartItemsList.globalCartItems;
-                       });
-                      })));
-                    },
-                    contentPadding: EdgeInsets.all(15),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child:  FadeInImage.assetNetwork(
-                        height: 60.0,
-                        width: 60.0,
-                        placeholder: 'assets/icons/image_placeholder.webp', // Your asset placeholder image
-                        image: item.image,
-                        fit: BoxFit.cover,
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset(
-                            'assets/icons/image_placeholder.webp', // Your fallback asset image
-                            fit: BoxFit.cover,
+      body: FutureBuilder(future: CartScreenProvider.instance.getCartItems(), builder: (context,snapshot){
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return Center(child: CircularProgressIndicator(),);
+        }
+        if(snapshot.hasError){
+          return Center(child:  Text(snapshot.error.toString()),);
+        }
+
+        return Consumer<CartScreenProvider>(builder: (context,value,child){
+          var cartItem = value.cartItemsList.data;
+          return (cartItem.isEmpty)
+              ?_EmptyCartScreen()
+              : Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(screenWidth * 0.04),
+                  itemCount: cartItem.length,
+                  itemBuilder: (context, index) {
+                    final item = cartItem[index];
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 15),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 6,
+                            spreadRadius: 2,
+                            offset: Offset(0, 3),
+                          )
+                        ],
+                      ),
+                      child: ListTile(
+                        onTap: (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context)=> _CartItemDetailsScreen(cartItems: item,)));
+                        },
+                        contentPadding: EdgeInsets.all(15),
+                        leading: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child:  FadeInImage.assetNetwork(
                             height: 60.0,
                             width: 60.0,
-                          );
-                        },
-                      ),
-                    ),
-                    title: Text(
-                      item.serviceName,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 6),
-                        Text(
-                          item.formatDate ?? '',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 13,
+                            placeholder: 'assets/icons/image_placeholder.webp', // Your asset placeholder image
+                            image: item.image,
+                            fit: BoxFit.cover,
+                            imageErrorBuilder: (context, error, stackTrace) {
+                              return Image.asset(
+                                'assets/icons/image_placeholder.webp', // Your fallback asset image
+                                fit: BoxFit.cover,
+                                height: 60.0,
+                                width: 60.0,
+                              );
+                            },
                           ),
                         ),
-                        SizedBox(height: 6),
-                        Text(
-                          'Qty: ${item.qty} | ₹${item.price}',
+                        title: Text(
+                          item.serviceName,
                           style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16,
                           ),
                         ),
-                      ],
-                    ),
-                    trailing: _deletingItemIds.contains(item.id) ? SizedBox(width:25.0, height: 25.0,child: CircularProgressIndicator(color: Colors.indigoAccent,)): IconButton(
-                      icon: Icon(Icons.delete_outline, color: Colors.red),
-                      onPressed: () async {
-                        setState(() {
-                          _deletingItemIds.add(item.id.toInt());
-                        });
-                        var status = await removeCartItem(item.id.toString());
-                        await Keys.homeScreenKey.currentState!.refresh();
-                        if (status) {
-                          setState(() {
-                            _cartItems = CartItemsList.globalCartItems;
-                            _totalAmount = _calculateTotalAmount(_cartItems);
-                          });
-                        }
-                        setState(() {
-                          _deletingItemIds.remove(item.id.toInt());
-                        });
-                      },
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          Divider(height: 1),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey[50],
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _priceRow('Subtotal', '₹${_totalAmount?.toStringAsFixed(2) ?? "0.00"}'),
-                _priceRow('Tax (18%)', '₹0'),
-                const Divider(),
-                _priceRow(
-                  'Total',
-                  '₹${_totalAmount?.toStringAsFixed(2) ?? "0.00"}',
-                  isBold: true,
-                ),
-                const SizedBox(height: 12),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) =>  PaymentAndAddressScreen(subTotal: _totalAmount,)),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 6),
+                            Text(
+                              item.formatDate ?? '',
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 13,
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            Text(
+                              'Qty: ${item.qty} | ₹${item.price}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                        trailing: _deletingItemIds.contains(item.id) ? SizedBox(width:25.0, height: 25.0,child: CircularProgressIndicator(color: Colors.indigoAccent,)): IconButton(
+                          icon: Icon(Icons.delete_outline, color: Colors.red),
+                          onPressed: () async {
+                            setState(() {
+                              _deletingItemIds.add(item.id.toInt());
+                            });
+                            var status = await CartScreenProvider.instance.removeCartItem(item.id.toString());
+                            setState(() {
+                              _deletingItemIds.remove(item.id.toInt());
+                            });
+                          },
+                        ),
+                      ),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.indigoAccent,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: const Text('Proceed to Checkout'),
                 ),
-              ],
-            ),
-          ),
+              ),
 
-        ],
-      ),
+              Divider(height: 1),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _priceRow('Subtotal', '₹${value.totalAmount.toStringAsFixed(2) ?? "0.00"}'),
+                    _priceRow('Tax (18%)', '₹0'),
+                    const Divider(),
+                    _priceRow(
+                      'Total',
+                      '₹${value.totalAmount.toStringAsFixed(2) ?? "0.00"}',
+                      isBold: true,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) =>  PaymentAndAddressScreen(subTotal: value.totalAmount)),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.indigoAccent,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text('Proceed to Checkout'),
+                    ),
+                  ],
+                ),
+              ),
+
+            ],
+          );
+        });
+      })
     );
 
   }
@@ -330,13 +329,7 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
-  double _calculateTotalAmount(List<CartItems> cartItems) {
-    double totalAmount = 0;
-    for (var item in cartItems) {
-      totalAmount += (item.price.toDouble() * item.qty.toDouble() );
-    }
-    return totalAmount;
-  }
+
 
 
 }
@@ -344,9 +337,8 @@ class _CartScreenState extends State<CartScreen> {
 
 class _CartItemDetailsScreen extends StatefulWidget{
   final CartItems cartItems;
-  final VoidCallback? onUpdate;
   Service? service;
-  _CartItemDetailsScreen({required this.cartItems,this.onUpdate}){
+  _CartItemDetailsScreen({required this.cartItems}){
     service = CategoriesServiceModel.getServiceById(cartItems.serviceId.toInt());
   }
 
@@ -565,8 +557,6 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                             _itemQuantity = newValue;
                           }
                         });
-                        await Keys.homeScreenKey.currentState!.refresh();
-                        widget.onUpdate!.call();
                       },
                     ),
                   ):Align(
@@ -591,16 +581,12 @@ class _CartItemDetailsScreenState extends State<_CartItemDetailsScreen> {
                           setState(() {
                             _isLoading = true;
                           });
-                          _isAdd = await addToCart(
+                          _isAdd = await CartScreenProvider.instance.addToCart(
                             context: context,
                             serviceId: widget.service!.id,
                             qty: _itemQuantity,
                             price: widget.service!.price.toDouble(),
                           );
-                          if (_isAdd) {
-                            await Keys.homeScreenKey.currentState!.refresh();
-                            widget.onUpdate!.call();
-                          }
                           setState(() {
                             _isLoading = false;
                           });

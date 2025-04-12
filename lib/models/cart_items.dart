@@ -16,7 +16,7 @@ class CartItemsList {
 
   final List<CartItems> data;
   static List<CartItems> _cartItems = [];
-  static List<CartItems> get globalCartItems => _cartItems;
+  // static List<CartItems> get globalCartItems => _cartItems;
   static Map<int,dynamic> itemQty = {};
   static Map<int,dynamic> cartIdByServiceId = {};
   factory CartItemsList.fromJson(Map<String, dynamic> json){

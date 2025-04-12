@@ -12,9 +12,7 @@ import 'package:http/http.dart';
 class UserProfileProvider with ChangeNotifier {
   static final UserProfileProvider instance = UserProfileProvider._internal();
 
-  UserProfileProvider._internal(){
-    _userDetails = UserDetails.fromJson({});
-  }
+  UserProfileProvider._internal();
 
   UserDetails _userDetails = UserDetails.fromJson({});
   UserDetails get userDetails => _userDetails;

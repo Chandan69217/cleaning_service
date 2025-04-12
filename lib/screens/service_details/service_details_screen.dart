@@ -1,14 +1,12 @@
 import 'package:cleaning_service/models/cart_items.dart';
 import 'package:cleaning_service/models/categories_service.dart';
 import 'package:cleaning_service/screens/cart/cart_screen.dart';
-import 'package:cleaning_service/utilities/add_to_cart.dart';
-import 'package:cleaning_service/utilities/update_cart_qty.dart';
+import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:cleaning_service/widgets/counter_button.dart';
 import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:flutter/material.dart';
 import '../../models/global_keys.dart';
 import '../../utilities/cust_colors.dart';
-import '../../utilities/remove_cart_item.dart';
 
 
 void showServiceDetails(BuildContext context,{Service? service}){
@@ -411,7 +409,7 @@ class _ServiceDetailsState extends State<_ServiceDetails> {
                           setState(() {
                             _isLoading = true;
                           });
-                          _isAdd = await addToCart(
+                          _isAdd = await CartScreenProvider.instance.addToCart(
                             context: context,
                             serviceId: widget.service!.id,
                             qty: _itemQuantity,
@@ -419,7 +417,6 @@ class _ServiceDetailsState extends State<_ServiceDetails> {
                           );
                           if (_isAdd) {
                             totalAmount.value = (_itemQuantity * widget.service!.price).toInt();
-                            Keys.homeScreenKey.currentState!.refresh();
                           }
                           setState(() {
                             _isLoading = false;

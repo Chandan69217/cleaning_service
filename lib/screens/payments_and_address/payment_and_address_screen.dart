@@ -5,6 +5,7 @@ import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/models/global_keys.dart';
 import 'package:cleaning_service/models/shipping_address.dart';
 import 'package:cleaning_service/utilities/const.dart';
+import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:cleaning_service/widgets/cust_loader.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
@@ -137,9 +138,8 @@ class _PaymentAndAddressScreenState extends State<PaymentAndAddressScreen> {
       });
 
       if(response.statusCode == 200){
-        CartItemsList.fromJson({});
         // Keys.dashboardScreenKey.currentState!.refresh();
-        Keys.homeScreenKey.currentState!.refresh();
+        await CartScreenProvider.instance.getCartItems();
         Keys.bookingScreenKey.currentState!.refresh();
         return true;
       }else{

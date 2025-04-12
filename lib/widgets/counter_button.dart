@@ -1,9 +1,9 @@
+import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:flutter/material.dart';
 import '../models/cart_items.dart';
 import '../models/categories_service.dart';
 import '../models/global_keys.dart';
-import '../utilities/remove_cart_item.dart';
-import '../utilities/update_cart_qty.dart';
+
 
 class CounterButton extends StatefulWidget {
   final int initialValue;
@@ -54,7 +54,7 @@ class _CounterButtonState extends State<CounterButton> {
     int newCount = _counter - 1;
 
     if (newCount == 0) {
-      var status = await removeCartItem(
+      var status = await CartScreenProvider.instance.removeCartItem(
         CartItemsList.cartIdByServiceId[widget.service.id].toString(),
       );
 
@@ -170,15 +170,13 @@ class _CounterButtonState extends State<CounterButton> {
 
   Future<int?> _updateQty(newValue)async{
     if(newValue < 1){
-      var status = await removeCartItem(CartItemsList.cartIdByServiceId[widget.service.id].toString());
+      var status = await CartScreenProvider.instance.removeCartItem(CartItemsList.cartIdByServiceId[widget.service.id].toString());
       if(status){
-        Keys.homeScreenKey.currentState!.refresh();
         return 0;
       }
     }else{
-      var status = await updateCartQty(cartId: CartItemsList.cartIdByServiceId[widget.service.id], qty: newValue);
+      var status = await CartScreenProvider.instance.updateCartQty(cartId: CartItemsList.cartIdByServiceId[widget.service.id], qty: newValue);
       if(status){
-        Keys.homeScreenKey.currentState!.refresh();
         return newValue;
       }
     }

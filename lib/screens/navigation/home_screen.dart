@@ -9,13 +9,16 @@ import 'package:cleaning_service/screens/cart/cart_screen.dart';
 import 'package:cleaning_service/screens/search/search_screen.dart';
 import 'package:cleaning_service/screens/service_details/service_details_screen.dart';
 import 'package:cleaning_service/screens/service_details/service_options.dart';
+import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
 import 'package:cleaning_service/utilities/const.dart';
-import 'package:cleaning_service/utilities/get_cart_items.dart';
+import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
+import 'package:cleaning_service/utilities/provider/home_screen_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../models/categories_service.dart';
@@ -56,74 +59,6 @@ class _SkipeedHomeScreenState extends State<SkipeedHomeScreen> {
   }
 }
 
-// class LocationSection extends StatelessWidget {
-//   final double fontSize;
-//   final double iconSize;
-//
-//   const LocationSection({required this.fontSize, required this.iconSize});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 75.0,
-//       padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
-//       ),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//         crossAxisAlignment: CrossAxisAlignment.center,
-//         children: [
-//           Expanded(
-//             child: Row(
-//               crossAxisAlignment: CrossAxisAlignment.center,
-//               children: [
-//                 Icon(FontAwesomeIcons.locationArrow, size: iconSize * 0.9),
-//                 SizedBox(width: 8.0),
-//                 Expanded(
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Expanded(
-//                         child: Text(
-//                           '${Data.user_placemarks.first.locality}',
-//                           style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-//                             fontSize: fontSize * 1.01,
-//                             fontWeight: FontWeight.bold,
-//                           ),
-//                         ),
-//                       ),
-//                       Expanded(
-//                         child: Text(
-//                           '${Data.address}',
-//                           style: TextStyle(
-//                             fontSize: fontSize * 0.7,
-//                             color: Color(0xFF757575),
-//                           ),
-//                           overflow: TextOverflow.ellipsis,
-//                           maxLines: 1,
-//                           softWrap: true,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//           SizedBox(width: 8.0,),
-//           Container(
-//               padding: EdgeInsets.all(5.0),
-//               decoration: BoxDecoration(
-//                   shape: BoxShape.circle,
-//                   border: Border.all(color: Colors.grey, width: 1)),
-//               child: Icon(Icons.shopping_cart, size: iconSize)),
-//         ],
-//       ),
-//     );
-//   }
-// }
 
 class LocationSection extends StatelessWidget {
   final double fontSize;
@@ -764,18 +699,6 @@ class _CategorySlideCardState extends State<CategorySlideCard> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  // List<String> imageUrls = [
-  //   'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
-  //   'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
-  //   'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
-  // ];
-
   @override
   void initState() {
     super.initState();
@@ -960,10 +883,8 @@ class LoggedInHomeScreen extends StatefulWidget {
 }
 
 class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
-  int _cartItemsCount = 0;
-  CartItemsList? _cartItems;
   final PageController _pageController = PageController();
-  late Future<CategoriesServiceModel?> _categories;
+  // late Future<CategoriesServiceModel?> _categories;
   static final int itemsPerPage = 4; // Number of items per page
 
 
@@ -978,7 +899,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
     return Scaffold(
       backgroundColor: CustColors.white,
       body: FutureBuilder(
-        future: _categories,
+        future: HomeScreenProvider.instance.fetchHomeScreenData(),
         builder: (_, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return SingleChildScrollView(child: HomeScreenCategorizedShimmer());
@@ -987,128 +908,136 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
           if (snapshot.hasError) {
             return _buildErrorWidget(snapshot.error.toString());
           }
-      
-          // Model Class
-          final model = snapshot.data;
-          // All Categories Data Received
-          final categories = model!.categories[0].subCategory;
-          // Checking if Categories is empty
-          int pageCount = (categories.length / itemsPerPage).ceil();
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                TopMenuSection(
-                  fontSize: fontSize,
-                  iconSize: iconSize,
-                  onCart: () => Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CartScreen())),
-                  onSearch: () =>
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => SearchScreen(),
-                      )),
-                  cartItemCount: _cartItemsCount,
-                ),
-                // Menu Section
-                if (categories.isNotEmpty)
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
-                    ),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: screenWidth * 0.45,
-                          child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: pageCount,
-                            itemBuilder: (context, pageIndex) {
-                              int startIndex = pageIndex * itemsPerPage;
-                              int endIndex = (startIndex + itemsPerPage) >
-                                  categories.length
-                                  ? categories.length
-                                  : (startIndex + itemsPerPage);
-                  
-                              List<SubCategory> pageItems =
-                              categories.sublist(startIndex, endIndex);
-                              return Padding(
-                                padding: EdgeInsets.all(screenWidth * 0.05),
-                                child: GridView.builder(
-                                  itemCount: pageItems.length,
-                                  gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 2.7,
-                                    crossAxisSpacing: screenWidth * 0.02,
-                                    mainAxisSpacing: screenWidth * 0.02,
-                                  ),
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemBuilder: (_, index) => MenuItems(
-                                    label: pageItems[index].subCategoryName,
-                                    icon: 'assets/icons/vacuum.webp',
-                                    fontSize: fontSize,
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  AllServicesListScreen(
-                                                    category:
-                                                    pageItems[index],
-                                                  )));
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        // SizedBox(height: 10),
-                        SmoothPageIndicator(
-                          controller: _pageController,
-                          count: pageCount,
-                          effect: ExpandingDotsEffect(
-                            dotHeight: 4.0,
-                            dotWidth: 4.0,
-                            activeDotColor: Colors.blue,
-                            dotColor: Colors.grey,
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                      ],
-                    ),
-                  ),
 
-                categories.isEmpty
-                    ? Center(
-                  child: Text(
-                    'Empty',
-                    style: TextStyle(
-                        fontSize: screenWidth * 0.05,
-                        fontWeight: FontWeight.w500),
-                  ),
-                )
-                    : ListView.builder(
-                    itemCount: categories.length,
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemBuilder: (__, index) {
-                      final category = categories[index];
-                      return Container(
-                        // margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
-                        padding: EdgeInsets.only(
-                            left: screenWidth * 0.05,
-                            bottom: screenWidth * 0.05,
-                            right: screenWidth * 0.05),
-                        decoration:
-                        BoxDecoration(color: Colors.white),
-                        child: CategorizedService(
-                          category: category,
+          return Consumer<HomeScreenProvider>(
+            builder: (context,value,child) {
+              // Model Class
+              final model = value.categoriesServiceModel;
+              // All Categories Data Received
+              final categories = model.categories[0].subCategory;
+              // Checking if Categories is empty
+              int pageCount = (categories.length / itemsPerPage).ceil();
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Consumer<CartScreenProvider>(
+                      builder: (context,value,child) {
+                        return TopMenuSection(
+                          fontSize: fontSize,
+                          iconSize: iconSize,
+                          onCart: () => Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => CartScreen())),
+                          onSearch: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SearchScreen(),
+                              )),
+                          cartItemCount: value.cartCount,
+                        );
+                      },
+                    ),
+                    // Menu Section
+                    if (categories.isNotEmpty)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border(bottom: BorderSide(color: Color(0xFFE0E0E0))),
                         ),
-                      );
-                    }),
-              ],
-            ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: screenWidth * 0.45,
+                              child: PageView.builder(
+                                controller: _pageController,
+                                itemCount: pageCount,
+                                itemBuilder: (context, pageIndex) {
+                                  int startIndex = pageIndex * itemsPerPage;
+                                  int endIndex = (startIndex + itemsPerPage) >
+                                      categories.length
+                                      ? categories.length
+                                      : (startIndex + itemsPerPage);
+
+                                  List<SubCategory> pageItems =
+                                  categories.sublist(startIndex, endIndex);
+                                  return Padding(
+                                    padding: EdgeInsets.all(screenWidth * 0.05),
+                                    child: GridView.builder(
+                                      itemCount: pageItems.length,
+                                      gridDelegate:
+                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2,
+                                        childAspectRatio: 2.7,
+                                        crossAxisSpacing: screenWidth * 0.02,
+                                        mainAxisSpacing: screenWidth * 0.02,
+                                      ),
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemBuilder: (_, index) => MenuItems(
+                                        label: pageItems[index].subCategoryName,
+                                        icon: 'assets/icons/vacuum.webp',
+                                        fontSize: fontSize,
+                                        onTap: () {
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      AllServicesListScreen(
+                                                        category:
+                                                        pageItems[index],
+                                                      )));
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            // SizedBox(height: 10),
+                            SmoothPageIndicator(
+                              controller: _pageController,
+                              count: pageCount,
+                              effect: ExpandingDotsEffect(
+                                dotHeight: 4.0,
+                                dotWidth: 4.0,
+                                activeDotColor: Colors.blue,
+                                dotColor: Colors.grey,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                        ),
+                      ),
+
+                    categories.isEmpty
+                        ? Center(
+                      child: Text(
+                        'Empty',
+                        style: TextStyle(
+                            fontSize: screenWidth * 0.05,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    )
+                        : ListView.builder(
+                        itemCount: categories.length,
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemBuilder: (__, index) {
+                          final category = categories[index];
+                          return Container(
+                            // margin: EdgeInsets.symmetric(vertical: screenWidth * 0.01),
+                            padding: EdgeInsets.only(
+                                left: screenWidth * 0.05,
+                                bottom: screenWidth * 0.05,
+                                right: screenWidth * 0.05),
+                            decoration:
+                            BoxDecoration(color: Colors.white),
+                            child: CategorizedService(
+                              category: category,
+                            ),
+                          );
+                        }),
+                  ],
+                ),
+              );
+            },
           );
         },
       ),
@@ -1118,22 +1047,21 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
   @override
   void initState() {
     super.initState();
-    _categories = _fetchHomeScreenData();
+    // _categories = HomeScreenProvider.instance.fetchHomeScreenData();
     WidgetsBinding.instance.addPostFrameCallback((duration) {
-      _init();
       ShippingAddressList.fetchAddresses();
     });
   }
 
-  Future<bool> _init() async {
-    _cartItems = await getCartItems();
-    setState(() {
-      if (_cartItems != null) {
-        _cartItemsCount = _cartItems!.data.length;
-      }
-    });
-    return true;
-  }
+  // Future<bool> _init() async {
+  //   _cartItems = await getCartItems();
+  //   setState(() {
+  //     if (_cartItems != null) {
+  //       _cartItemsCount = _cartItems!.data.length;
+  //     }
+  //   });
+  //   return true;
+  // }
 
   Widget _buildErrorWidget(String errorMessage) {
     return Center(
@@ -1161,7 +1089,7 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
             ElevatedButton.icon(
               onPressed: (){
                 setState(() {
-                  _categories = _fetchHomeScreenData();
+                  // _categories = HomeScreenProvider.instance.fetchHomeScreenData();
                 });
               }, // Calls the retry function
               icon: Icon(Icons.refresh),
@@ -1177,65 +1105,50 @@ class LoggedInHomeScreenState extends State<LoggedInHomeScreen>{
     );
   }
 
-  static Future<bool> isConnected() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
-    return connectivityResult != ConnectivityResult.none;
-  }
 
-  Future<CategoriesServiceModel?> _fetchHomeScreenData() async {
+  // Future<CategoriesServiceModel?> _fetchHomeScreenData() async {
+  //
+  //   bool hasInternet = await CheckConnection.isConnected();
+  //   if (!hasInternet) {
+  //     return Future.error("No Internet Connection. Please check your network.");
+  //   }
+  //
+  //   try {
+  //     var uri = Uri.https(Urls.base_url, Urls.categories);
+  //     var response = await get(uri, headers: {
+  //       'Content-Type': 'application/json',
+  //     });
+  //     print(response.body);
+  //     if (response.statusCode == 200) {
+  //       return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
+  //     } else {
+  //       print(
+  //           'Server error: ${response.statusCode} - ${response.reasonPhrase}');
+  //       return null;
+  //     }
+  //   } on SocketException catch (e) {
+  //     print('No internet connection: $e');
+  //     return Future.error("No Internet Connection. Please check your network.");
+  //   } on HttpException catch (e) {
+  //     print('HTTP Exception: $e');
+  //     return Future.error("Server error. Please try again later.");
+  //   } on FormatException catch (e) {
+  //     return Future.error("Something went wrong!!. Please try again later.");
+  //     return null;
+  //   } catch (e) {
+  //     print('Unexpected error: $e');
+  //     return Future.error("Something went wrong!!. Please try again later.");
+  //   }
+  // }
 
-    bool hasInternet = await isConnected();
-    if (!hasInternet) {
-      return Future.error("No Internet Connection. Please check your network.");
-    }
-
-    try {
-      var uri = Uri.https(Urls.base_url, Urls.categories);
-      var response = await get(uri, headers: {
-        'Content-Type': 'application/json',
-      });
-      print(response.body);
-      if (response.statusCode == 200) {
-        return CategoriesServiceModel.fromJson(json.decode(response.body) as Map<String, dynamic>);
-      } else {
-        print(
-            'Server error: ${response.statusCode} - ${response.reasonPhrase}');
-        return null;
-      }
-    } on SocketException catch (e) {
-      print('No internet connection: $e');
-      return Future.error("No Internet Connection. Please check your network.");
-    } on HttpException catch (e) {
-      print('HTTP Exception: $e');
-      return Future.error("Server error. Please try again later.");
-    } on FormatException catch (e) {
-      return Future.error("Something went wrong!!. Please try again later.");
-      return null;
-    } catch (e) {
-      print('Unexpected error: $e');
-      return Future.error("Something went wrong!!. Please try again later.");
-    }
-  }
-
-  Future<bool> refresh() async {
-   return await _init();
-  }
+  // Future<bool> refresh() async {
+  //  return await _init();
+  // }
 
 }
 
 class CategorizedService extends StatelessWidget {
   final SubCategory category;
-  // List<String> imageUrls = [
-  //   'https://img.freepik.com/free-photo/plumbing-repair-service_181624-27146.jpg?t=st=1740204179~exp=1740207779~hmac=88ee9c247eeb54030d6cf20311ffcbe7b4221c570b32e964f638b770f53d3f8c&w=1800',
-  //   'https://img.freepik.com/free-photo/side-view-man-working-as-plumber_23-2150746307.jpg?t=st=1740204214~exp=1740207814~hmac=d667f3b872dd3a7957fc26c458cfd2ae4f8480b378bea3ff7ce4b503eefc99c5&w=1800',
-  //   'https://img.freepik.com/free-photo/service-man-adjusting-house-heating-system_1303-26545.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/asian-plumber-blue-overalls-clearing-blockage-drain_1098-17773.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/man-electrical-technician-working-switchboard-with-fuses-installation-connection-electrical-equipment-close-up_169016-5082.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/electrician-builder-with-beard-worker-white-helmet-work-installation-lamps-height-professional-overalls-with-drill-background-repair-site_169016-7328.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/electrician-builder-work-examines-cable-connection-electrical-line-fuselage-industrial-switchboard-professional-overalls-with-electrician-s-tool_169016-8831.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/repairman-doing-air-conditioner-service_1303-26541.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid',
-  //   'https://img.freepik.com/free-photo/hvac-technician-working-capacitor-part-condensing-unit_155003-20894.jpg?ga=GA1.1.521463082.1740204178&semt=ais_hybrid'
-  // ];
   CategorizedService({
     required this.category,
   });
