@@ -1,3 +1,4 @@
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cleaning_service/models/user_details.dart';
 import 'package:cleaning_service/screens/settings/about_screen.dart';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
@@ -14,6 +15,7 @@ import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/cust_colors.dart';
 import 'package:cleaning_service/utilities/provider/user_profile_provider.dart';
 import 'package:cleaning_service/widgets/cust_loader.dart';
+import 'package:cleaning_service/widgets/cust_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -604,6 +606,15 @@ class _EditProfileFormState extends State<EditProfileForm> {
                       bool isUpdated = await UserProfileProvider.instance.updateUserProfile(_formData);
                       if (isUpdated) {
                         Navigator.pop(context);
+                      }else{
+                        Navigator.of(context).pop();
+                        showSnackBar(
+                          context: context,
+                          title: "Update Failed",
+                          message: "No changes were made to your profile.",
+                          contentType: ContentType.failure,
+                        );
+
                       }
                       setState(() {
                         _isLoading = false;
