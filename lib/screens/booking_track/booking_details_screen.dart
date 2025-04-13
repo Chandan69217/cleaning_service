@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:cleaning_service/models/global_keys.dart';
 import 'package:cleaning_service/shimmer_effect/booking_details_shimmer_effect.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
 import 'package:cleaning_service/utilities/check_token_validity.dart';
 import 'package:cleaning_service/utilities/const.dart';

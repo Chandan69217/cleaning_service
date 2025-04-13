@@ -24,7 +24,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import '../../models/categories_service.dart';
 import '../../models/data.dart';
 import '../../shimmer_effect/category_effect/categorized_service_shimmer.dart';
-import '../../utilities/api_urls.dart';
+import '../../utilities/urls/api_urls.dart';
 import '../../utilities/cust_colors.dart';
 
 class SkipeedHomeScreen extends StatefulWidget {

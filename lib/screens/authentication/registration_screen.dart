@@ -1,5 +1,5 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';

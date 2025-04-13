@@ -12,7 +12,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:lottie/lottie.dart';
-import '../../utilities/api_urls.dart';
+import '../../utilities/urls/api_urls.dart';
 import 'checkout_screen.dart';
 
 class PaymentAndAddressScreen extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:cleaning_service/models/cart_items.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:flutter/cupertino.dart';

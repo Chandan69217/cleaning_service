@@ -3,7 +3,7 @@ import 'package:cleaning_service/models/booked_service_list.dart';
 import 'package:cleaning_service/screens/booking_track/booking_details_screen.dart';
 import 'package:cleaning_service/screens/service_details/service_options.dart';
 import 'package:cleaning_service/shimmer_effect/category_effect/booking_shimmer_effect.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/utilities/provider/booking_screen_provider.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';

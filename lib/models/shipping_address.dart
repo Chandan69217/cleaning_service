@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import '../utilities/api_urls.dart';
+import '../utilities/urls/api_urls.dart';
 import '../utilities/const.dart';
 
 

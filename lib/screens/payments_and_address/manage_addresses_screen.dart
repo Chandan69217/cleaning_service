@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/models/shipping_address.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';

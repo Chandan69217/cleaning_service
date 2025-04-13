@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:cleaning_service/utilities/const.dart';
 import 'package:cleaning_service/widgets/cust_snack_bar.dart';
 import 'package:flutter/cupertino.dart';

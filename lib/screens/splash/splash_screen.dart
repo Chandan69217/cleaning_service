@@ -4,7 +4,7 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cleaning_service/models/data.dart';
 import 'package:cleaning_service/screens/authentication/login_screen.dart';
 import 'package:cleaning_service/screens/dashboard.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
 import 'package:cleaning_service/widgets/cust_snack_bar.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';

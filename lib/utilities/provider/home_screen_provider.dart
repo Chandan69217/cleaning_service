@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cleaning_service/models/categories_service.dart';
-import 'package:cleaning_service/utilities/api_urls.dart';
+import 'package:cleaning_service/utilities/urls/api_urls.dart';
 import 'package:cleaning_service/utilities/check_internet/is_connected.dart';
 import 'package:cleaning_service/utilities/provider/cart_screen_provider.dart';
 import 'package:flutter/material.dart';
